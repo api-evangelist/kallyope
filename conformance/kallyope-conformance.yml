@@ -1,0 +1,103 @@
+generated: '2026-08-01'
+method: derived
+source: openapi/kallyope-content-api-openapi.yml
+supporting_source: observed responses from https://kallyope.com/wp-json/ on 2026-08-01
+note: >-
+  Cross-cutting standards conformance for Kallyope's public REST surface. Derived from
+  the observed contract and responses. Kallyope makes no public compliance claims — no
+  trust center, no certification page, no SOC 2 / ISO 27001 / HIPAA / GDPR statement was
+  found on kallyope.com — so no `Compliance` pointer is emitted in apis.yml. As a
+  clinical-stage sponsor the company is subject to HIPAA, 21 CFR Part 11 and GCP in its
+  trial operations, but nothing about that posture is published and none of it touches
+  this marketing-content API.
+api: kallyope:content-api
+standards:
+- id: http-1.1
+  conforms: true
+  evidence: Standard status semantics; HTTP/2 negotiated on the wire.
+- id: rest
+  conforms: true
+  evidence: Resource collections and items with GET semantics and HAL-style `_links` traversal.
+- id: rfc8288-web-linking
+  conforms: true
+  evidence: 'Pagination emits a Link header with rel="next" / rel="prev": observed on /wp/v2/document.'
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use the WordPress `{code, message, data.status}` envelope served as
+    application/json. No type URI, title or instance member.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: /.well-known/security.txt returned 404.
+- id: rfc9727-api-catalog
+  conforms: false
+  evidence: /.well-known/api-catalog returned 404.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header observed on any response.
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 security scheme; /.well-known/oauth-authorization-server returned 404.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returned 404.
+- id: openapi
+  conforms: false
+  evidence: >-
+    Kallyope publishes no OpenAPI description. The document in openapi/ is derived by
+    API Evangelist from the live route index, not published by the provider.
+- id: asyncapi
+  conforms: false
+  evidence: No event, streaming or webhook surface exists.
+- id: json-ld
+  conforms: true
+  evidence: >-
+    Yoast SEO emits a schema.org JSON-LD graph (Organization, WebSite, WebPage,
+    BreadcrumbList, ImageObject) in every page head and in the `yoast_head` field of
+    every REST record. Captured verbatim at json-ld/kallyope-organization.jsonld.
+- id: schema-org
+  conforms: true
+  evidence: Organization and WebSite types with a SearchAction potentialAction.
+- id: sitemaps-org
+  conforms: true
+  evidence: /sitemap_index.xml with post, page, program, event and content-type child sitemaps.
+- id: cors
+  conforms: true
+  evidence: >-
+    Access-Control-Allow-Headers and Access-Control-Expose-Headers (X-WP-Total,
+    X-WP-TotalPages, Link) observed on every response.
+- id: hsts
+  conforms: true
+  evidence: 'strict-transport-security: max-age=31622400 observed; see security/kallyope-domain-security.yml.'
+- id: dnssec
+  conforms: false
+  evidence: Probed false for kallyope.com.
+- id: caa
+  conforms: false
+  evidence: No CAA record on kallyope.com.
+- id: dmarc
+  conforms: true
+  partial: true
+  evidence: DMARC record present with policy `none` — monitoring only, not enforcing.
+- id: pagination
+  conforms: true
+  evidence: page/per_page with X-WP-Total and X-WP-TotalPages; see conventions/.
+- id: idempotency
+  conforms: false
+  evidence: No idempotency key mechanism; the public surface is read-only.
+- id: fhir
+  conforms: false
+  evidence: Not a health-data API; no FHIR resource shapes.
+- id: hl7-v2
+  conforms: false
+- id: cdisc
+  conforms: false
+  evidence: No clinical-trial data surface is exposed.
+regulatory_context:
+  note: >-
+    Recorded for accuracy, not as a conformance claim. Kallyope is a US clinical-stage
+    biotechnology sponsor (lead candidate elismetrep in Phase 3 for acute migraine), so
+    it operates under FDA IND regulations, ICH GCP, 21 CFR Part 11 and HIPAA in its
+    clinical operations. None of that is published, and none of it applies to this
+    marketing-content API. No regulated data is exposed by any endpoint described here.
+published_compliance_program: false

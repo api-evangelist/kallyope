@@ -1,0 +1,194 @@
+generated: '2026-08-01'
+method: derived
+source: openapi/kallyope-content-api-openapi.yml
+supporting_source: https://kallyope.com/wp-json/wp/v2/types + /wp/v2/taxonomies
+note: >-
+  Entity-relationship graph derived from the registered post types and taxonomies that
+  the live API publishes at /wp/v2/types and /wp/v2/taxonomies, plus the term-ID
+  reference fields observed on a real `document` record. Kallyope publishes no object
+  reference; identifiers are WordPress integer post/term IDs with no prefixes.
+api: kallyope:content-api
+identifiers:
+  scheme: integer
+  note: >-
+    Post and term IDs are plain auto-increment integers with no type prefix, drawn from
+    the same WordPress ID space, so an ID alone does not identify its entity type. The
+    `slug` is the stable human-facing key and the `link` field is the canonical URL.
+entities:
+- name: Document
+  kind: custom-post-type
+  wp_name: document
+  rest_base: /wp/v2/document
+  label: Documents
+  description: >-
+    A piece of Kallyope scientific communication — a congress poster, a presentation,
+    a publication or a video. This is the one genuinely first-party content model on
+    the surface.
+  first_party: true
+  hierarchical: false
+  observed_count: 8
+  key_fields: [id, slug, title.rendered, content.rendered, excerpt.rendered, date, modified,
+    status, link, featured_media]
+  example: >-
+    id 2421 - "Preclinical Efficacy of Elismetrep, a TRPM8 Blocker, as a Monotherapy and
+    in Combination with Gepants or Triptans" (AHS 2026).
+- name: Program
+  kind: custom-taxonomy
+  wp_name: program
+  rest_base: /wp/v2/program
+  label: Programs
+  description: A named Kallyope drug program. The join key between a compound and its published science.
+  first_party: true
+  hierarchical: true
+  observed_count: 1
+  observed_terms: [elismetrep]
+- name: Event
+  kind: custom-taxonomy
+  wp_name: event
+  rest_base: /wp/v2/event
+  label: Events
+  description: The scientific congress a document was presented at.
+  first_party: true
+  hierarchical: true
+  observed_count: 2
+  observed_terms: [academy-of-neurology-annual-meeting, america-headache-society-annual-meeting]
+- name: ContentType
+  kind: custom-taxonomy
+  wp_name: content-type
+  rest_base: /wp/v2/content-type
+  label: Content Types
+  description: The form a document takes.
+  first_party: true
+  hierarchical: true
+  observed_count: 5
+  observed_terms: [presentation, poster, publication, video, terms-conditions]
+- name: DocumentType
+  kind: custom-taxonomy
+  wp_name: document-type
+  rest_base: /wp/v2/document-type
+  label: Document Types
+  description: Registered classification for documents; observed empty.
+  first_party: true
+  hierarchical: true
+  observed_count: 0
+- name: Post
+  kind: post-type
+  wp_name: post
+  rest_base: /wp/v2/posts
+  label: Posts
+  description: Company news and press releases.
+  first_party: false
+  observed_count: 6
+- name: Page
+  kind: post-type
+  wp_name: page
+  rest_base: /wp/v2/pages
+  label: Pages
+  description: Site pages - home, about, pipeline, platform, partnering, news, careers, contact.
+  first_party: false
+  hierarchical: true
+  observed_count: 9
+- name: Media
+  kind: post-type
+  wp_name: attachment
+  rest_base: /wp/v2/media
+  label: Media
+  description: Uploaded PDFs, splash images and logos backing documents and pages.
+  first_party: false
+  observed_count: 215
+- name: Category
+  kind: taxonomy
+  wp_name: category
+  rest_base: /wp/v2/categories
+  label: Categories
+  description: Core taxonomy applied to posts (and to the non-REST `team` post type).
+  first_party: false
+  observed_count: 8
+- name: User
+  kind: entity
+  wp_name: user
+  rest_base: /wp/v2/users
+  label: Users
+  description: Public authors of published posts.
+  first_party: false
+  observed_count: 2
+relationships:
+- from: Document
+  to: Program
+  cardinality: has_many
+  via: program
+  field_type: array of term IDs
+  evidence: 'observed document 2421 -> program: [51]'
+- from: Document
+  to: Event
+  cardinality: has_many
+  via: event
+  field_type: array of term IDs
+  evidence: 'observed document 2421 -> event: [53]'
+- from: Document
+  to: ContentType
+  cardinality: has_many
+  via: content-type
+  field_type: array of term IDs
+  evidence: 'observed document 2421 -> content-type: [54]'
+- from: Document
+  to: DocumentType
+  cardinality: has_many
+  via: document-type
+  field_type: array of term IDs
+  evidence: 'observed document 2421 -> document-type: []'
+- from: Document
+  to: Media
+  cardinality: has_one
+  via: featured_media
+  field_type: attachment ID
+  evidence: 'observed document 2421 -> featured_media: 2433'
+- from: Program
+  to: Document
+  cardinality: has_many
+  via: /wp/v2/document?program={id}
+  field_type: reverse query
+  evidence: 'term elismetrep reports count: 7'
+- from: Event
+  to: Document
+  cardinality: has_many
+  via: /wp/v2/document?event={id}
+  field_type: reverse query
+  evidence: 'term america-headache-society-annual-meeting reports count: 6'
+- from: ContentType
+  to: Document
+  cardinality: has_many
+  via: /wp/v2/document?content-type={id}
+  field_type: reverse query
+- from: Post
+  to: Category
+  cardinality: has_many
+  via: categories
+  field_type: array of term IDs
+- from: Post
+  to: User
+  cardinality: belongs_to
+  via: author
+  field_type: user ID
+- from: Post
+  to: Media
+  cardinality: has_one
+  via: featured_media
+  field_type: attachment ID
+- from: Program
+  to: Program
+  cardinality: belongs_to
+  via: parent
+  field_type: term ID
+  note: Taxonomy is hierarchical; all observed terms are top level (parent 0).
+traversal:
+  link_relations: >-
+    Every record carries a HAL-style `_links` block with `self`, `collection`, `about`,
+    `author`, `wp:featuredmedia`, `wp:attachment`, `wp:term` and a `curies` definition,
+    so the graph is walkable from any record without prior knowledge of the routes.
+gaps:
+- The `team` post type is referenced by the category and post_tag taxonomies in
+  /wp/v2/taxonomies but is not itself registered in /wp/v2/types, so team members are
+  not reachable through the REST API - only through the rendered site.
+- No pipeline, compound, indication, trial or publication-metadata entity exists. The
+  drug pipeline shown at https://kallyope.com/pipeline/ is page content, not structured data.

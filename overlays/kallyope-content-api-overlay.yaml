@@ -1,0 +1,54 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Kallyope Content REST API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-08-01'
+  method: generated
+  source: openapi/kallyope-content-api-openapi.yml
+  note: >-
+    Captures the API Evangelist enhancements applied on top of the derived description
+    of Kallyope's public WordPress REST surface. Kallyope publishes no OpenAPI, so the
+    document this extends is itself derived from the live route index at
+    https://kallyope.com/wp-json/ — the overlay records our classification and rating
+    metadata separately rather than mutating that derived description.
+extends: openapi/kallyope-content-api-openapi.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-surface: content
+    x-apievangelist-first-party-product: false
+    x-apievangelist-note: >-
+      Incidental WordPress REST surface. Real, anonymous and callable, but a byproduct
+      of the CMS rather than a designed developer product. Kallyope publishes no
+      developer portal, API reference, SDKs, CLI, status page or GitHub organization.
+    x-apievangelist-provider-type: biotechnology
+    x-apievangelist-observed: '2026-08-01'
+- target: $.info
+  update:
+    x-apievangelist-artifacts:
+      authentication: authentication/kallyope-authentication.yml
+      conventions: conventions/kallyope-conventions.yml
+      errors: errors/kallyope-problem-types.yml
+      data_model: data-model/kallyope-data-model.yml
+      lifecycle: lifecycle/kallyope-lifecycle.yml
+      conformance: conformance/kallyope-conformance.yml
+      skills: skills/_index.yml
+      mcp: mcp/kallyope-mcp.yml
+- target: $.paths['/wp/v2/document'].get
+  update:
+    x-apievangelist-marquee: true
+    x-apievangelist-note: >-
+      The one genuinely first-party collection on this surface — Kallyope's scientific
+      document library, filterable by the program / event / content-type taxonomies.
+- target: $.paths['/wp/v2/program'].get
+  update:
+    x-apievangelist-marquee: true
+    x-apievangelist-note: >-
+      First-party taxonomy naming Kallyope's drug programs; the join key between a
+      compound (elismetrep) and its published scientific communications.
+- target: $.components.schemas.Error
+  update:
+    x-apievangelist-note: >-
+      WordPress error envelope, not RFC 9457. An agent must read data.status rather
+      than a `status` member, and there is no `type` URI to dereference.

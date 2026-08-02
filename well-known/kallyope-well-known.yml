@@ -1,0 +1,61 @@
+generated: '2026-08-01'
+method: probed
+source: live GET of each path on 2026-08-01
+host: https://kallyope.com
+note: >-
+  Every /.well-known/ discovery path was probed against kallyope.com, the only host in
+  this repo (api., developer., docs., portal., status., trust., security. and careers.
+  subdomains were also probed — none serves anything; see lifecycle/ for the dangling
+  docs. record). Nothing was found, so no raw files were saved. The 404s are recorded
+  because absence is the finding: this provider publishes no machine-readable discovery
+  surface at the well-known namespace, and returns a real 404 rather than a catch-all
+  200, so the negatives are trustworthy.
+documents:
+- path: /.well-known/security.txt
+  status: 404
+  spec: RFC 9116
+- path: /.well-known/openid-configuration
+  status: 404
+  spec: OpenID Connect Discovery 1.0
+- path: /.well-known/oauth-authorization-server
+  status: 404
+  spec: RFC 8414
+- path: /.well-known/oauth-protected-resource
+  status: 404
+  spec: RFC 9728
+- path: /.well-known/api-catalog
+  status: 404
+  spec: RFC 9727
+- path: /.well-known/ai-plugin.json
+  status: 404
+- path: /.well-known/agent-card.json
+  status: 404
+  spec: A2A 1.0.0
+- path: /.well-known/agent.json
+  status: 404
+  spec: A2A pre-0.3 legacy
+- path: /.well-known/dnt-policy.txt
+  status: 404
+other_discovery:
+- path: /robots.txt
+  status: 200
+  finding: 'Yoast-generated. `User-agent: * / Disallow:` — everything allowed, no AI-crawler
+    directives, no AIPREF or Content-Signal policy. Points at /sitemap_index.xml.'
+- path: /sitemap_index.xml
+  status: 200
+  finding: Yoast sitemap index with post, page, program, event and content-type child sitemaps.
+- path: /wp-json/
+  status: 200
+  finding: >-
+    The one machine-readable index this provider does publish — the WordPress REST route
+    index, 326 routes across 14 namespaces. Described in
+    openapi/kallyope-content-api-openapi.yml.
+- path: /llms.txt
+  status: 404
+  finding: Not published; a generated one is kept at llms/kallyope-llms.txt.
+consent_and_identity:
+  security_txt: false
+  aipref: false
+  content_signal: false
+  web_bot_auth: false
+  http_message_signatures: false

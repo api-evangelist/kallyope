@@ -1,0 +1,110 @@
+generated: '2026-08-01'
+method: derived
+source: mcp/kallyope-mcp.yml + openapi/kallyope-content-api-openapi.yml
+note: >-
+  Binds each candidate MCP tool to the REST operation that backs it. Because the tool set
+  is itself derived from the OpenAPI (Kallyope publishes no MCP server), every binding is
+  exact and high confidence by construction — there is no MCP-only or GraphQL-only
+  divergence to record on this provider. The value of the crosswalk here is the
+  `rest_only` column: it names the operations an agent surface would leave behind.
+api: kallyope:content-api
+surfaces:
+  openapi:
+    file: openapi/kallyope-content-api-openapi.yml
+    published_by_provider: false
+    gated: false
+  graphql:
+    endpoint: null
+    note: No GraphQL surface. https://kallyope.com/graphql returned 404 and no wp-graphql namespace is registered.
+  mcp:
+    url: null
+    published_by_provider: false
+    note: Candidate tool set only; see mcp/kallyope-mcp.yml.
+crosswalk:
+- tool: list_documents
+  category: documents
+  rest: [listDocuments]
+  binding: rest
+  confidence: high
+- tool: get_document
+  category: documents
+  rest: [getDocument]
+  binding: rest
+  confidence: high
+- tool: list_programs
+  category: taxonomy
+  rest: [listPrograms]
+  binding: rest
+  confidence: high
+- tool: list_events
+  category: taxonomy
+  rest: [listEvents]
+  binding: rest
+  confidence: high
+- tool: list_content_types
+  category: taxonomy
+  rest: [listContentTypes]
+  binding: rest
+  confidence: high
+- tool: list_news
+  category: news
+  rest: [listPosts]
+  binding: rest
+  confidence: high
+- tool: get_news_post
+  category: news
+  rest: [getPost]
+  binding: rest
+  confidence: high
+- tool: list_pages
+  category: pages
+  rest: [listPages]
+  binding: rest
+  confidence: high
+- tool: get_page
+  category: pages
+  rest: [getPage]
+  binding: rest
+  confidence: high
+- tool: search_site
+  category: discovery
+  rest: [search]
+  binding: rest
+  confidence: high
+- tool: get_media
+  category: media
+  rest: [getMediaItem]
+  binding: rest
+  confidence: high
+mcp_only: []
+graphql_only: []
+rest_only:
+- operation: getApiIndex
+  capability: discovery
+  reason: Route-index introspection; a server would consume this at startup rather than expose it as a tool.
+- operation: listDocumentTypes
+  capability: taxonomy
+  reason: Registered taxonomy observed with zero terms; no tool worth exposing until it is populated.
+- operation: listCategories
+  capability: taxonomy
+  reason: Core WordPress categories applied to news posts only; low agent value.
+- operation: listMedia
+  capability: media
+  reason: 215 attachments with no useful filter beyond MIME type; item lookup by ID is the useful path.
+- operation: listTypes
+  capability: discovery
+  reason: Schema introspection, consumed at startup rather than exposed.
+- operation: listTaxonomies
+  capability: discovery
+  reason: Schema introspection, consumed at startup rather than exposed.
+- operation: listUsers
+  capability: identity
+  reason: Two WordPress author accounts; no agent value and a needless identity exposure.
+coverage:
+  tools_named: 11
+  tools_bound: 11
+  mcp_only: 0
+  graphql_only: 0
+  rest_operations_total: 18
+  rest_operations_with_tool: 11
+  rest_only: 7

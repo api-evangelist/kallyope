@@ -1,0 +1,81 @@
+generated: '2026-08-01'
+method: probed
+source: https://kallyope.com/wp-json/
+note: >-
+  Kallyope publishes no versioning policy, deprecation policy, SLA, changelog or status
+  page for this surface — there is no developer portal to publish them on. Everything
+  below was observed live on 2026-08-01. Absences are recorded as absences; no
+  StatusPage or Deprecation pointer is emitted in apis.yml because neither exists.
+api: kallyope:content-api
+versioning:
+  scheme: uri-path namespace
+  current: wp/v2
+  namespaces_registered: 14
+  namespaces:
+  - wp/v2
+  - wp-site-health/v1
+  - wp-block-editor/v1
+  - wp-abilities/v1
+  - oembed/1.0
+  - yoast/v1
+  - akismet/v1
+  - redirection/v1
+  - ithemes-security/v1
+  - ithemes-security/rpc
+  - liquidweb/harbor/v1
+  - cptui/v1
+  - duplicate-post/v1
+  - regenerate-thumbnails/v1
+  policy_url: null
+  note: >-
+    Versioning is inherited from WordPress core and the installed plugins, not owned by
+    Kallyope. The version of the contract therefore moves whenever the site's WordPress
+    core or plugin set is upgraded, with no announcement to consumers.
+deprecation:
+  policy_url: null
+  sunset_header: false
+  deprecation_header: false
+  note: >-
+    No RFC 8594 Sunset or Deprecation header was observed on any response, and no
+    deprecation policy is published. A route could be removed by a plugin change with no
+    notice.
+deprecated_operations: []
+sla:
+  url: null
+  uptime_target: null
+  note: No SLA is published for this surface; it is not offered as a product.
+status_page: null
+status_page_note: >-
+  No status page exists. status.kallyope.com does not resolve, and no third-party status
+  provider (Statuspage, Instatus, Better Stack) is linked from kallyope.com. The
+  underlying platform publishes its own status at https://status.pantheon.io/ and
+  https://www.fastlystatus.com/ but Kallyope does not reference either, so no StatusPage
+  pointer is claimed.
+changelog:
+  url: null
+  note: >-
+    No changelog is published for the API. The site's own content changes are observable
+    through the `modified` / `modified_gmt` fields on every record and through
+    `?modified_after=` filters, which is the only change signal a consumer has.
+support:
+  channel: https://kallyope.com/contact/
+  developer_support: false
+  note: A general corporate contact form; there is no developer support channel.
+infrastructure:
+  origin: Pantheon (nginx)
+  cdn: Fastly
+  evidence:
+  - 'X-Pantheon-Styx-Hostname header observed on every response'
+  - 'Via: 1.1 varnish and X-Served-By: cache-ewr / cache-chi observed on every response'
+  - www.kallyope.com resolves to live-kallyope.pantheon.io
+observed:
+  date: '2026-08-01'
+  tls_certificate_expires: Sep 16 12:28:12 2026 GMT
+dangling_dns:
+- host: docs.kallyope.com
+  finding: >-
+    Resolves to 34.197.23.49 (ec2-34-197-23-49.compute-1.amazonaws.com) but neither HTTP
+    nor HTTPS completes a connection. A stale A record pointing at an EC2 address the
+    company appears no longer to control - worth flagging to Kallyope as a subdomain
+    takeover risk, not as an API surface.
+  probed: '2026-08-01'

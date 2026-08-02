@@ -1,0 +1,130 @@
+generated: '2026-08-01'
+method: probed
+source: https://kallyope.com/wp-json/
+note: >-
+  Cross-cutting request/response semantics for Kallyope's public WordPress REST surface,
+  recorded from the live route index and from observed responses on 2026-08-01. Kallyope
+  publishes no conventions documentation of its own; every statement below was either
+  declared in the route index `args` or observed on the wire. Where a convention is
+  absent (idempotency, rate-limit signalling, request tracing) that absence is recorded
+  as a finding, not filled in.
+api: kallyope:content-api
+base_url: https://kallyope.com/wp-json
+authentication:
+  style: none for reads
+  detail: authentication/kallyope-authentication.yml
+media_types:
+  request: none (GET-only public surface)
+  response: application/json; charset=UTF-8
+  problem_json: false
+idempotency:
+  supported: false
+  header: null
+  note: >-
+    No idempotency key, header or parameter exists anywhere in the 326-route index, and
+    the public surface is read-only, so there is no unsafe operation to make idempotent.
+    GET is idempotent by HTTP semantics only. No `Idempotency` pointer is emitted for
+    this provider — there is no idempotency contract to point at.
+pagination:
+  style: page-number
+  parameters:
+  - name: page
+    default: 1
+    description: Current page of the collection.
+  - name: per_page
+    default: 10
+    minimum: 1
+    maximum: 100
+    description: Maximum number of items to be returned in result set.
+  - name: offset
+    description: Offset the result set by a specific number of items (post-type collections only).
+  response_headers:
+  - name: X-WP-Total
+    description: Total number of items in the collection.
+  - name: X-WP-TotalPages
+    description: Total number of pages available.
+  - name: Link
+    description: RFC 8288 link header carrying rel="next" and rel="prev".
+  cors_exposed: true
+  cors_note: >-
+    Access-Control-Expose-Headers advertises X-WP-Total, X-WP-TotalPages and Link, so a
+    browser client can read the pagination signal cross-origin.
+  observed_example: 'GET /wp/v2/document?per_page=2 -> X-WP-Total: 8, X-WP-TotalPages: 4,
+    Link: <https://kallyope.com/wp-json/wp/v2/document?per_page=2&page=2>; rel="next"'
+filtering:
+  search: '`search` free-text on every collection; `search_columns` and `search_semantics`
+    on post-type collections.'
+  date_windows: [after, before, modified_after, modified_before]
+  identity: [include, exclude, slug, status]
+  taxonomy: >-
+    Document collections accept term-ID filters named after each taxonomy — program,
+    event, content-type, document-type — each with a matching `_exclude` twin, plus
+    `tax_relation` (AND/OR) to combine them.
+  ordering: '`order` (asc|desc) with `orderby` on a post or term attribute.'
+sparse_fields:
+  supported: true
+  parameter: _fields
+  note: Stock WordPress `_fields` projection; not documented by Kallyope but accepted by the router.
+field_expansion:
+  supported: false
+  note: >-
+    No expand/include-related mechanism. Related records are reached by following the
+    HAL-style `_links` block (self, collection, about, author, wp:featuredmedia, wp:term)
+    or by a second request against the referenced ID.
+context_shaping:
+  parameter: context
+  values_observed: [view, embed, edit]
+  note: '`edit` context requires an authenticated capability and 401s anonymously.'
+metadata:
+  supported: true
+  field: meta
+  note: Per-record `meta` object plus an Advanced Custom Fields `acf` payload (observed empty).
+  seo_extension: >-
+    Yoast SEO injects `yoast_head` (rendered head markup) and `yoast_head_json`
+    (structured) onto every record, carrying a schema.org JSON-LD graph — see
+    json-ld/kallyope-organization.jsonld.
+request_tracing:
+  correlation_header: null
+  note: >-
+    No client-settable request-id. Responses do carry infrastructure trace headers —
+    `X-Styx-Req-Id` and `X-Pantheon-Styx-Hostname` from Pantheon, plus Fastly's
+    `X-Served-By`, `X-Cache`, `X-Cache-Hits` and `X-Timer` — which are usable for
+    support correlation but are not a documented tracing contract.
+caching:
+  cache_control: 'public, max-age=86400'
+  cdn: Fastly (via 1.1 varnish)
+  origin: Pantheon (nginx)
+  etag: false
+  conditional_requests: false
+  note: >-
+    Responses are cached publicly for 24 hours at the edge, so a client polling for new
+    documents may see stale data for up to a day. No ETag or Last-Modified was observed,
+    so conditional GET is not available.
+versioning:
+  scheme: uri-path namespace
+  current: wp/v2
+  detail: lifecycle/kallyope-lifecycle.yml
+error_envelope:
+  format: wordpress
+  rfc9457: false
+  shape: '{code: string, message: string, data: {status: integer, params?: object, details?: object}}'
+  content_type: application/json
+  note: >-
+    The HTTP status is mirrored into `data.status`. There is no `type` URI, no `title`
+    and no `instance`, so an agent cannot dereference an error for remediation guidance.
+  catalog: errors/kallyope-problem-types.yml
+rate_limiting:
+  documented: false
+  headers_observed: []
+  note: >-
+    No RateLimit, X-RateLimit or Retry-After headers were observed on any response, and
+    no quota is published. Absence recorded; not inferred to mean unlimited.
+webhooks:
+  supported: false
+  note: No webhook, event or streaming surface exists on this provider.
+cross_links:
+  authentication: authentication/kallyope-authentication.yml
+  errors: errors/kallyope-problem-types.yml
+  lifecycle: lifecycle/kallyope-lifecycle.yml
+  data_model: data-model/kallyope-data-model.yml
+  openapi: openapi/kallyope-content-api-openapi.yml

@@ -1,0 +1,87 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebPage",
+      "@id": "https://kallyope.com/",
+      "url": "https://kallyope.com/",
+      "name": "Kallyope | Focusing on Big Health Challenges That Matter",
+      "isPartOf": {
+        "@id": "https://kallyope.com/#website"
+      },
+      "about": {
+        "@id": "https://kallyope.com/#organization"
+      },
+      "datePublished": "2015-12-03T22:58:37+00:00",
+      "dateModified": "2026-07-27T01:17:39+00:00",
+      "description": "At Kallyope, we are leveraging insights into neural signaling pathways and developing innovative medicines for the treatment of migraine and metabolic disorders.",
+      "breadcrumb": {
+        "@id": "https://kallyope.com/#breadcrumb"
+      },
+      "inLanguage": "en-US",
+      "potentialAction": [
+        {
+          "@type": "ReadAction",
+          "target": [
+            "https://kallyope.com/"
+          ]
+        }
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://kallyope.com/#breadcrumb",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home"
+        }
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://kallyope.com/#website",
+      "url": "https://kallyope.com/",
+      "name": "Kallyope",
+      "description": "",
+      "publisher": {
+        "@id": "https://kallyope.com/#organization"
+      },
+      "potentialAction": [
+        {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://kallyope.com/?s={search_term_string}"
+          },
+          "query-input": {
+            "@type": "PropertyValueSpecification",
+            "valueRequired": true,
+            "valueName": "search_term_string"
+          }
+        }
+      ],
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://kallyope.com/#organization",
+      "name": "Kallyope",
+      "url": "https://kallyope.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "inLanguage": "en-US",
+        "@id": "https://kallyope.com/#/schema/logo/image/",
+        "url": "https://kallyope.com/wp-content/uploads/2022/06/Kallyope_og.jpg",
+        "contentUrl": "https://kallyope.com/wp-content/uploads/2022/06/Kallyope_og.jpg",
+        "width": 1200,
+        "height": 627,
+        "caption": "Kallyope"
+      },
+      "image": {
+        "@id": "https://kallyope.com/#/schema/logo/image/"
+      }
+    }
+  ]
+}

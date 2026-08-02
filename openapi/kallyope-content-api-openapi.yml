@@ -1,0 +1,619 @@
+openapi: 3.1.0
+x-provenance:
+  generated: '2026-08-01'
+  method: derived
+  source: https://kallyope.com/wp-json/
+  note: >-
+    Derived by API Evangelist from the live, anonymous WordPress REST API route index
+    published at https://kallyope.com/wp-json/ on 2026-08-01, and from an observed
+    HTTP GET of every path below. Kallyope, Inc. does not publish an OpenAPI description;
+    this document describes only routes, query parameters and response shapes that were
+    actually observed on the wire or declared verbatim in the route index. Query
+    parameters are copied from the `args` block the route index publishes for each
+    endpoint. Only the anonymously readable GET surface is described — the route index
+    also registers POST/PUT/PATCH/DELETE on these collections plus 13 further plugin
+    namespaces (ithemes-security, akismet, redirection, yoast, liquidweb/harbor, cptui,
+    duplicate-post, regenerate-thumbnails, wp-site-health, wp-block-editor, wp-abilities,
+    oembed), all of which require an authenticated WordPress session or application
+    password and were not exercised. Nothing here is invented — where a shape was not
+    observable it is left unconstrained rather than guessed.
+info:
+  title: Kallyope Content REST API (derived)
+  version: '2'
+  summary: >-
+    Anonymous read-only REST surface behind kallyope.com, exposing Kallyope's company
+    news, site pages, media library and its first-party library of scientific documents
+    (posters, presentations, publications and video) as JSON.
+  description: |
+    Kallyope, Inc. runs kallyope.com on WordPress (hosted on Pantheon, fronted by Fastly)
+    and exposes the WordPress REST API publicly at `https://kallyope.com/wp-json`. The
+    route index registers **326 routes across 14 namespaces**; the publicly readable
+    portion is the core `wp/v2` namespace, which Kallyope has extended with **first-party
+    content models** registered through Custom Post Type UI:
+
+    | Model | Kind | REST base | Observed items |
+    |---|---|---|---|
+    | `document` | custom post type | `/wp/v2/document` | 8 |
+    | `program` | custom taxonomy | `/wp/v2/program` | 1 (`elismetrep`) |
+    | `event` | custom taxonomy | `/wp/v2/event` | 2 congresses |
+    | `content-type` | custom taxonomy | `/wp/v2/content-type` | 5 |
+    | `document-type` | custom taxonomy | `/wp/v2/document-type` | 0 |
+
+    A `document` is a piece of scientific communication — the AHS 2026 elismetrep poster
+    and MOA presentation, for example — carrying `title`, `content`, `excerpt`,
+    `featured_media` and term references into `program`, `event`, `content-type` and
+    `document-type`. Alongside those sit the core `posts` (company news, 6 items),
+    `pages` (9), `media` (215), `categories` (8), `users` (2), `search`, `types` and
+    `taxonomies` collections.
+
+    These endpoints require **no authentication** and returned real JSON payloads when
+    probed on 2026-08-01. This is a content and marketing API, not a Klarity discovery
+    platform API, a research-data API or a clinical API — Kallyope publishes no developer
+    portal, no API reference, no SDKs, no CLI and no public GitHub organization, and the
+    surface exists as a byproduct of running WordPress rather than as a designed public
+    contract. Responses are standard WordPress REST records, so field names follow
+    WordPress internals (`id`, `slug`, `title.rendered`, `content.rendered`, `_links`,
+    plus Yoast SEO's `yoast_head` / `yoast_head_json`).
+
+    Collections page with `page` / `per_page` (max 100) and report `X-WP-Total` and
+    `X-WP-TotalPages`, with RFC 8288 `Link` rel="next"/"prev". Errors are the WordPress
+    `{code, message, data.status}` envelope — not RFC 9457 problem+json.
+  contact:
+    name: Kallyope, Inc.
+    url: https://kallyope.com/contact/
+  x-derived-by:
+    organization: API Evangelist
+    url: https://apievangelist.com
+servers:
+- url: https://kallyope.com/wp-json
+  description: Production WordPress REST API root for kallyope.com
+tags:
+- name: Documents
+  description: Kallyope's first-party library of scientific posters, presentations, publications and video.
+- name: Taxonomies
+  description: The first-party program / event / content-type / document-type classifications applied to documents.
+- name: News
+  description: Company news and press-release posts.
+- name: Pages
+  description: Site pages (about, pipeline, platform, partnering, careers, contact).
+- name: Media
+  description: The uploaded media library backing documents and pages.
+- name: Discovery
+  description: Site-wide search and the registered post-type / taxonomy indexes.
+paths:
+  /:
+    get:
+      operationId: getApiIndex
+      tags: [Discovery]
+      summary: Get the REST API root index
+      description: >-
+        Returns the WordPress REST API discovery document — site name, URL, the list of
+        registered namespaces, every registered route with its methods and declared args,
+        and the `authentication` block advertising application-password authorization.
+      responses:
+        '200':
+          description: API root index
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name: {type: string}
+                  description: {type: string}
+                  url: {type: string, format: uri}
+                  namespaces: {type: array, items: {type: string}}
+                  authentication: {type: object}
+                  routes: {type: object}
+  /wp/v2/document:
+    get:
+      operationId: listDocuments
+      tags: [Documents]
+      summary: List documents
+      description: >-
+        List Kallyope's scientific documents — congress posters, presentations,
+        publications and video. Filterable by the first-party program, event,
+        content-type and document-type taxonomies.
+      parameters:
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: page, in: query, description: Current page of the collection., schema: {type: integer, default: 1}}
+      - {name: per_page, in: query, description: Maximum number of items to be returned in result set., schema: {type: integer, minimum: 1, maximum: 100, default: 10}}
+      - {name: search, in: query, description: Limit results to those matching a string., schema: {type: string}}
+      - {name: after, in: query, description: Limit response to posts published after a given ISO8601 compliant date., schema: {type: string}}
+      - {name: before, in: query, description: Limit response to posts published before a given ISO8601 compliant date., schema: {type: string}}
+      - {name: modified_after, in: query, description: Limit response to posts modified after a given ISO8601 compliant date., schema: {type: string}}
+      - {name: modified_before, in: query, description: Limit response to posts modified before a given ISO8601 compliant date., schema: {type: string}}
+      - {name: exclude, in: query, description: Ensure result set excludes specific IDs., schema: {type: array, items: {type: integer}}}
+      - {name: include, in: query, description: Limit result set to specific IDs., schema: {type: array, items: {type: integer}}}
+      - {name: offset, in: query, description: Offset the result set by a specific number of items., schema: {type: integer}}
+      - {name: order, in: query, description: Order sort attribute ascending or descending., schema: {type: string, enum: [asc, desc]}}
+      - {name: orderby, in: query, description: Sort collection by post attribute., schema: {type: string}}
+      - {name: slug, in: query, description: Limit result set to posts with one or more specific slugs., schema: {type: array, items: {type: string}}}
+      - {name: status, in: query, description: Limit result set to posts assigned one or more statuses., schema: {type: array, items: {type: string}}}
+      - {name: tax_relation, in: query, description: Limit result set based on relationship between multiple taxonomies., schema: {type: string, enum: [AND, OR]}}
+      - {name: program, in: query, description: Limit result set to items with specific terms assigned in the program taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: program_exclude, in: query, description: Limit result set to items except those with specific terms assigned in the program taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: event, in: query, description: Limit result set to items with specific terms assigned in the event taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: event_exclude, in: query, description: Limit result set to items except those with specific terms assigned in the event taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: content-type, in: query, description: Limit result set to items with specific terms assigned in the content-type taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: content-type_exclude, in: query, description: Limit result set to items except those with specific terms assigned in the content-type taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: document-type, in: query, description: Limit result set to items with specific terms assigned in the document-type taxonomy., schema: {type: array, items: {type: integer}}}
+      responses:
+        '200':
+          description: A page of documents
+          headers:
+            X-WP-Total: {description: Total number of items in the collection., schema: {type: integer}}
+            X-WP-TotalPages: {description: Total number of pages available., schema: {type: integer}}
+            Link: {description: RFC 8288 pagination links (rel="next" / rel="prev")., schema: {type: string}}
+            Cache-Control: {description: 'Observed: public, max-age=86400.', schema: {type: string}}
+          content:
+            application/json:
+              schema:
+                type: array
+                items: {$ref: '#/components/schemas/Document'}
+        '400': {$ref: '#/components/responses/InvalidParam'}
+  /wp/v2/document/{id}:
+    get:
+      operationId: getDocument
+      tags: [Documents]
+      summary: Get a document by ID
+      parameters:
+      - {name: id, in: path, required: true, description: Unique identifier for the post., schema: {type: integer}}
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: excerpt_length, in: query, description: Override the default excerpt length., schema: {type: integer}}
+      - {name: password, in: query, description: The password for the post if it is password protected., schema: {type: string}}
+      responses:
+        '200':
+          description: A single document
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Document'}
+        '404': {$ref: '#/components/responses/InvalidPostId'}
+  /wp/v2/program:
+    get:
+      operationId: listPrograms
+      tags: [Taxonomies]
+      summary: List program terms
+      description: >-
+        List the first-party `program` taxonomy — Kallyope's named drug programs.
+        Observed on 2026-08-01: one term, `elismetrep` (7 associated documents).
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSearch'}
+      - {$ref: '#/components/parameters/TermSlug'}
+      - {$ref: '#/components/parameters/TermHideEmpty'}
+      - {$ref: '#/components/parameters/TermPost'}
+      - {$ref: '#/components/parameters/TermParent'}
+      responses:
+        '200':
+          description: A page of program terms
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Term'}}
+  /wp/v2/event:
+    get:
+      operationId: listEvents
+      tags: [Taxonomies]
+      summary: List event terms
+      description: >-
+        List the first-party `event` taxonomy — the scientific congresses a document was
+        presented at. Observed on 2026-08-01: `academy-of-neurology-annual-meeting` and
+        `america-headache-society-annual-meeting`.
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSearch'}
+      - {$ref: '#/components/parameters/TermSlug'}
+      - {$ref: '#/components/parameters/TermHideEmpty'}
+      - {$ref: '#/components/parameters/TermPost'}
+      responses:
+        '200':
+          description: A page of event terms
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Term'}}
+  /wp/v2/content-type:
+    get:
+      operationId: listContentTypes
+      tags: [Taxonomies]
+      summary: List content-type terms
+      description: >-
+        List the first-party `content-type` taxonomy — the form a document takes.
+        Observed on 2026-08-01: `presentation`, `poster`, `publication`, `video`,
+        `terms-conditions`.
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSearch'}
+      - {$ref: '#/components/parameters/TermSlug'}
+      - {$ref: '#/components/parameters/TermHideEmpty'}
+      - {$ref: '#/components/parameters/TermPost'}
+      responses:
+        '200':
+          description: A page of content-type terms
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Term'}}
+  /wp/v2/document-type:
+    get:
+      operationId: listDocumentTypes
+      tags: [Taxonomies]
+      summary: List document-type terms
+      description: >-
+        List the first-party `document-type` taxonomy. Registered and publicly readable,
+        but observed empty (0 terms) on 2026-08-01.
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSlug'}
+      - {$ref: '#/components/parameters/TermHideEmpty'}
+      responses:
+        '200':
+          description: A page of document-type terms
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Term'}}
+  /wp/v2/posts:
+    get:
+      operationId: listPosts
+      tags: [News]
+      summary: List company news posts
+      description: >-
+        List Kallyope's news and press-release posts. Observed on 2026-08-01: 6 items.
+      parameters:
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: page, in: query, description: Current page of the collection., schema: {type: integer, default: 1}}
+      - {name: per_page, in: query, description: Maximum number of items to be returned in result set., schema: {type: integer, minimum: 1, maximum: 100, default: 10}}
+      - {name: search, in: query, description: Limit results to those matching a string., schema: {type: string}}
+      - {name: after, in: query, description: Limit response to posts published after a given ISO8601 compliant date., schema: {type: string}}
+      - {name: before, in: query, description: Limit response to posts published before a given ISO8601 compliant date., schema: {type: string}}
+      - {name: slug, in: query, description: Limit result set to posts with one or more specific slugs., schema: {type: array, items: {type: string}}}
+      - {name: categories, in: query, description: Limit result set to items with specific terms assigned in the categories taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: categories_exclude, in: query, description: Limit result set to items except those with specific terms assigned in the categories taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: tags, in: query, description: Limit result set to items with specific terms assigned in the tags taxonomy., schema: {type: array, items: {type: integer}}}
+      - {name: order, in: query, description: Order sort attribute ascending or descending., schema: {type: string, enum: [asc, desc]}}
+      - {name: orderby, in: query, description: Sort collection by post attribute., schema: {type: string}}
+      responses:
+        '200':
+          description: A page of posts
+          headers:
+            X-WP-Total: {description: Total number of items in the collection., schema: {type: integer}}
+            X-WP-TotalPages: {description: Total number of pages available., schema: {type: integer}}
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Post'}}
+        '400': {$ref: '#/components/responses/InvalidParam'}
+  /wp/v2/posts/{id}:
+    get:
+      operationId: getPost
+      tags: [News]
+      summary: Get a news post by ID
+      parameters:
+      - {name: id, in: path, required: true, description: Unique identifier for the post., schema: {type: integer}}
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      responses:
+        '200':
+          description: A single post
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Post'}
+        '404': {$ref: '#/components/responses/InvalidPostId'}
+  /wp/v2/pages:
+    get:
+      operationId: listPages
+      tags: [Pages]
+      summary: List site pages
+      description: >-
+        List the site's pages — home, about, pipeline, platform, partnering, careers,
+        news, contact. Observed on 2026-08-01: 9 items.
+      parameters:
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: page, in: query, description: Current page of the collection., schema: {type: integer, default: 1}}
+      - {name: per_page, in: query, description: Maximum number of items to be returned in result set., schema: {type: integer, minimum: 1, maximum: 100, default: 10}}
+      - {name: search, in: query, description: Limit results to those matching a string., schema: {type: string}}
+      - {name: slug, in: query, description: Limit result set to posts with one or more specific slugs., schema: {type: array, items: {type: string}}}
+      - {name: parent, in: query, description: Limit result set to items with particular parent IDs., schema: {type: array, items: {type: integer}}}
+      responses:
+        '200':
+          description: A page of pages
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Post'}}
+  /wp/v2/pages/{id}:
+    get:
+      operationId: getPage
+      tags: [Pages]
+      summary: Get a site page by ID
+      parameters:
+      - {name: id, in: path, required: true, description: Unique identifier for the post., schema: {type: integer}}
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      responses:
+        '200':
+          description: A single page
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/Post'}
+        '404': {$ref: '#/components/responses/InvalidPostId'}
+  /wp/v2/media:
+    get:
+      operationId: listMedia
+      tags: [Media]
+      summary: List media library items
+      description: >-
+        List uploaded media — the PDFs, splash images and logos referenced by documents
+        and pages. Observed on 2026-08-01: X-WP-Total 215.
+      parameters:
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: page, in: query, description: Current page of the collection., schema: {type: integer, default: 1}}
+      - {name: per_page, in: query, description: Maximum number of items to be returned in result set., schema: {type: integer, minimum: 1, maximum: 100, default: 10}}
+      - {name: search, in: query, description: Limit results to those matching a string., schema: {type: string}}
+      - {name: media_type, in: query, description: Limit result set to attachments of a particular media type., schema: {type: string}}
+      - {name: mime_type, in: query, description: Limit result set to attachments of a particular MIME type., schema: {type: string}}
+      responses:
+        '200':
+          description: A page of media items
+          content:
+            application/json:
+              schema: {type: array, items: {type: object}}
+  /wp/v2/media/{id}:
+    get:
+      operationId: getMediaItem
+      tags: [Media]
+      summary: Get a media item by ID
+      parameters:
+      - {name: id, in: path, required: true, description: Unique identifier for the attachment., schema: {type: integer}}
+      responses:
+        '200':
+          description: A single media item
+          content:
+            application/json:
+              schema: {type: object}
+        '404': {$ref: '#/components/responses/InvalidPostId'}
+  /wp/v2/categories:
+    get:
+      operationId: listCategories
+      tags: [Taxonomies]
+      summary: List category terms
+      description: 'Core WordPress category taxonomy. Observed on 2026-08-01: 8 terms.'
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSearch'}
+      - {$ref: '#/components/parameters/TermSlug'}
+      - {$ref: '#/components/parameters/TermHideEmpty'}
+      responses:
+        '200':
+          description: A page of category terms
+          content:
+            application/json:
+              schema: {type: array, items: {$ref: '#/components/schemas/Term'}}
+  /wp/v2/search:
+    get:
+      operationId: search
+      tags: [Discovery]
+      summary: Search across all public content
+      description: >-
+        Site-wide search returning lightweight `{id, title, url, type, subtype}` records
+        across posts, pages and documents. Observed on 2026-08-01: 23 searchable items.
+      parameters:
+      - {name: context, in: query, description: 'Scope under which the request is made; determines fields present in response.', schema: {type: string}}
+      - {name: page, in: query, description: Current page of the collection., schema: {type: integer, default: 1}}
+      - {name: per_page, in: query, description: Maximum number of items to be returned in result set., schema: {type: integer, minimum: 1, maximum: 100, default: 10}}
+      - {name: search, in: query, description: Limit results to those matching a string., schema: {type: string}}
+      - {name: type, in: query, description: Limit results to items of an object type., schema: {type: string}}
+      - {name: subtype, in: query, description: Limit results to items of one or more object subtypes., schema: {type: array, items: {type: string}}}
+      - {name: exclude, in: query, description: Ensure result set excludes specific IDs., schema: {type: array, items: {type: integer}}}
+      - {name: include, in: query, description: Limit result set to specific IDs., schema: {type: array, items: {type: integer}}}
+      responses:
+        '200':
+          description: A page of search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: {type: integer}
+                    title: {type: string}
+                    url: {type: string, format: uri}
+                    type: {type: string}
+                    subtype: {type: string}
+  /wp/v2/types:
+    get:
+      operationId: listTypes
+      tags: [Discovery]
+      summary: List registered post types
+      description: >-
+        Returns every registered post type with its `rest_base`, `rest_namespace`,
+        `taxonomies` and hierarchy flag — the machine-readable index of the content
+        models this API exposes, including Kallyope's first-party `document` type.
+      responses:
+        '200':
+          description: Map of post type name to post type descriptor
+          content:
+            application/json:
+              schema: {type: object}
+  /wp/v2/taxonomies:
+    get:
+      operationId: listTaxonomies
+      tags: [Discovery]
+      summary: List registered taxonomies
+      description: >-
+        Returns every registered taxonomy with its `rest_base`, the post types it applies
+        to, and hierarchy flag — including Kallyope's first-party `program`, `event`,
+        `content-type` and `document-type` taxonomies.
+      responses:
+        '200':
+          description: Map of taxonomy name to taxonomy descriptor
+          content:
+            application/json:
+              schema: {type: object}
+  /wp/v2/users:
+    get:
+      operationId: listUsers
+      tags: [Discovery]
+      summary: List public authors
+      description: >-
+        Publicly readable author list (authors of published posts only). Observed on
+        2026-08-01: 2 users.
+      parameters:
+      - {$ref: '#/components/parameters/TermPage'}
+      - {$ref: '#/components/parameters/TermPerPage'}
+      - {$ref: '#/components/parameters/TermSearch'}
+      responses:
+        '200':
+          description: A page of users
+          content:
+            application/json:
+              schema: {type: array, items: {type: object}}
+components:
+  parameters:
+    TermPage:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema: {type: integer, default: 1}
+    TermPerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema: {type: integer, minimum: 1, maximum: 100, default: 10}
+    TermSearch:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema: {type: string}
+    TermSlug:
+      name: slug
+      in: query
+      description: Limit result set to terms with one or more specific slugs.
+      schema: {type: array, items: {type: string}}
+    TermHideEmpty:
+      name: hide_empty
+      in: query
+      description: Whether to hide terms not assigned to any posts.
+      schema: {type: boolean}
+    TermPost:
+      name: post
+      in: query
+      description: Limit result set to terms assigned to a specific post.
+      schema: {type: integer}
+    TermParent:
+      name: parent
+      in: query
+      description: Limit result set to terms assigned to a specific parent.
+      schema: {type: integer}
+  responses:
+    InvalidParam:
+      description: >-
+        A query parameter failed validation. WordPress error envelope with
+        `code: rest_invalid_param` and per-parameter detail under `data.params`.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            code: rest_invalid_param
+            message: 'Invalid parameter(s): per_page'
+            data:
+              status: 400
+              params:
+                per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
+    InvalidPostId:
+      description: No record exists with that identifier.
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Error'}
+          example:
+            code: rest_post_invalid_id
+            message: Invalid post ID.
+            data:
+              status: 404
+  schemas:
+    Rendered:
+      type: object
+      description: WordPress rendered-content wrapper.
+      properties:
+        rendered: {type: string}
+        protected: {type: boolean}
+    Document:
+      type: object
+      description: >-
+        A Kallyope scientific document — congress poster, presentation, publication or
+        video. Custom post type `document`.
+      properties:
+        id: {type: integer}
+        date: {type: string}
+        date_gmt: {type: string}
+        modified: {type: string}
+        modified_gmt: {type: string}
+        guid: {$ref: '#/components/schemas/Rendered'}
+        slug: {type: string}
+        status: {type: string}
+        type: {type: string, const: document}
+        link: {type: string, format: uri}
+        title: {$ref: '#/components/schemas/Rendered'}
+        content: {$ref: '#/components/schemas/Rendered'}
+        excerpt: {$ref: '#/components/schemas/Rendered'}
+        featured_media: {type: integer, description: Attachment ID of the splash image.}
+        template: {type: string}
+        meta: {type: object}
+        document-type: {type: array, items: {type: integer}, description: Term IDs in the document-type taxonomy.}
+        program: {type: array, items: {type: integer}, description: Term IDs in the program taxonomy.}
+        event: {type: array, items: {type: integer}, description: Term IDs in the event taxonomy.}
+        content-type: {type: array, items: {type: integer}, description: Term IDs in the content-type taxonomy.}
+        class_list: {type: array, items: {type: string}}
+        acf: {description: Advanced Custom Fields payload; observed empty.}
+        yoast_head: {type: string, description: Yoast SEO rendered head markup, including a schema.org JSON-LD graph.}
+        yoast_head_json: {type: object, description: Yoast SEO head as structured JSON.}
+        _links: {type: object, description: HAL-style link relations (self, collection, about, wp:featuredmedia, wp:term, curies).}
+    Post:
+      type: object
+      description: A core WordPress post or page record.
+      properties:
+        id: {type: integer}
+        date: {type: string}
+        modified: {type: string}
+        slug: {type: string}
+        status: {type: string}
+        type: {type: string}
+        link: {type: string, format: uri}
+        title: {$ref: '#/components/schemas/Rendered'}
+        content: {$ref: '#/components/schemas/Rendered'}
+        excerpt: {$ref: '#/components/schemas/Rendered'}
+        author: {type: integer}
+        featured_media: {type: integer}
+        categories: {type: array, items: {type: integer}}
+        tags: {type: array, items: {type: integer}}
+        yoast_head_json: {type: object}
+        _links: {type: object}
+    Term:
+      type: object
+      description: A taxonomy term (program, event, content-type, document-type, category).
+      properties:
+        id: {type: integer}
+        count: {type: integer, description: Number of documents assigned this term.}
+        description: {type: string}
+        link: {type: string, format: uri}
+        name: {type: string}
+        slug: {type: string}
+        taxonomy: {type: string}
+        parent: {type: integer}
+        meta: {type: object}
+        yoast_head_json: {type: object}
+        _links: {type: object}
+    Error:
+      type: object
+      description: >-
+        The WordPress REST error envelope. Not RFC 9457 problem+json — served as
+        application/json with the HTTP status mirrored into `data.status`.
+      required: [code, message, data]
+      properties:
+        code: {type: string, description: 'Machine-readable error code, e.g. rest_no_route.'}
+        message: {type: string, description: Human-readable message.}
+        data:
+          type: object
+          properties:
+            status: {type: integer}
+            params: {type: object}
+            details: {type: object}

@@ -1,0 +1,75 @@
+generated: '2026-08-01'
+method: probed
+source: https://kallyope.com/wp-json/
+format: wordpress-rest
+rfc9457: false
+note: >-
+  Kallyope publishes no error reference. Every entry below was produced by issuing the
+  request shown in `observed_request` against the live API on 2026-08-01 and recording
+  the response verbatim, or derived from the 4xx responses declared in
+  openapi/kallyope-content-api-openapi.yml. Nothing is extrapolated from the WordPress
+  core error registry that was not actually returned by this host.
+api: kallyope:content-api
+envelope:
+  content_type: application/json
+  shape:
+    code: Machine-readable error slug.
+    message: Human-readable message.
+    data.status: The HTTP status, mirrored into the body.
+    data.params: Per-parameter validation messages (validation errors only).
+    data.details: Per-parameter structured detail with its own nested code (validation errors only).
+  deviations_from_rfc9457:
+  - No `type` URI - an agent has nothing to dereference for remediation.
+  - No `title` member - `message` carries the human string instead.
+  - No `instance` member - the failing request is not identified in the body.
+  - Served as application/json, not application/problem+json.
+problems:
+- status: 400
+  code: rest_invalid_param
+  title: Invalid query parameter
+  detail: One or more query parameters failed the router's declared validation.
+  remediation: >-
+    Read `data.details.<param>.message` for the constraint that failed. For `per_page`
+    the bound is 1-100 inclusive.
+  observed_request: GET /wp/v2/document?per_page=999
+  observed_body: '{"code":"rest_invalid_param","message":"Invalid parameter(s): per_page","data":{"status":400,"params":{"per_page":"per_page
+    must be between 1 (inclusive) and 100 (inclusive)"}}}'
+  source_operation: openapi/kallyope-content-api-openapi.yml#listDocuments
+- status: 401
+  code: rest_forbidden
+  title: Capability required
+  detail: >-
+    The route exists and was reached, but the anonymous caller lacks the WordPress
+    capability it requires. Returned as 401 rather than 403 by WordPress convention.
+  remediation: >-
+    Not remediable by a third party. These routes are gated to authenticated WordPress
+    users of kallyope.com; no self-service credential is issued. Stay on the anonymous
+    read surface described in the OpenAPI.
+  observed_request: GET /wp/v2/settings
+  observed_body: '{"code":"rest_forbidden","message":"Sorry, you are not allowed to do that.","data":{"status":401}}'
+- status: 404
+  code: rest_post_invalid_id
+  title: Record not found
+  detail: No post, page, document or media item exists with the supplied identifier.
+  remediation: List the collection first and use an `id` returned by it.
+  observed_request: GET /wp/v2/document/999999
+  observed_body: '{"code":"rest_post_invalid_id","message":"Invalid post ID.","data":{"status":404}}'
+  source_operation: openapi/kallyope-content-api-openapi.yml#getDocument
+- status: 404
+  code: rest_no_route
+  title: No matching route
+  detail: >-
+    The path and method combination is not registered. Also the response for any path
+    outside the 326 registered routes.
+  remediation: >-
+    GET the index at https://kallyope.com/wp-json/ and match the path against the
+    `routes` map, including the method.
+  observed_request: GET /wp/v2/nope
+  observed_body: '{"code":"rest_no_route","message":"No route was found matching the URL and request
+    method.","data":{"status":404}}'
+  source_operation: openapi/kallyope-content-api-openapi.yml#getApiIndex
+not_observed:
+- status: 429
+  note: No rate limiting was observed or documented; no 429 was produced under probing.
+- status: 5xx
+  note: No server error was produced during probing; the origin is Pantheon behind Fastly.

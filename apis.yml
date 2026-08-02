@@ -1,7 +1,24 @@
 aid: kallyope
 name: Kallyope
-description: 'Kallyope is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Kallyope, Inc. is a New York City clinical-stage biotechnology company,
+  founded in 2015 by Columbia University scientists Charles Zuker, Tom Maniatis and
+  Richard Axel, that translates the biology of the gut-brain axis into medicines. It
+  launched with a $44M Series A and has since raised a $66M Series B, a $112M Series
+  C and a $236M Series D co-led by Mubadala Investment Company and The Column Group,
+  with backers including Bill Gates, Lux Capital, Polaris Partners, Casdin Capital and
+  Alexandria Real Estate Equities. Its proprietary Klarity platform integrates single-cell
+  sequencing, pathway circuit mapping, optogenetics and chemogenetics, proprietary human
+  genetics, mouse and human organoid systems, and small-molecule and peptide chemistry
+  to map the neural circuits underlying migraine and metabolism; lead candidate elismetrep,
+  a TRPM8 blocker, is in Phase 3 development for acute migraine. Kallyope publishes no
+  developer portal, API reference, SDKs, CLI, status page or public GitHub organization,
+  and no OpenAPI, AsyncAPI, GraphQL, MCP or A2A agent-card surface was found on any host.
+  Enrichment probing did find one real, anonymous, read-only REST surface: kallyope.com
+  runs WordPress and exposes the WordPress REST API publicly at https://kallyope.com/wp-json,
+  carrying the company news feed, site pages, media library and a first-party "document"
+  content type of scientific posters, presentations and publications classified by the
+  custom program, event, content-type and document-type taxonomies.'
+image: https://kallyope.com/wp-content/uploads/2022/06/Kallyope_og.jpg
 url: https://raw.githubusercontent.com/api-evangelist/kallyope/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
@@ -12,7 +29,65 @@ created: '2026-08-01'
 modified: '2026-08-01'
 tags:
 - Company
-apis: []
+- Biotechnology
+- Life Sciences
+- Pharmaceuticals
+- Drug Discovery
+- Neuroscience
+- Gut-Brain Axis
+- Migraine
+- Metabolic Disease
+- Clinical Trials
+- Content
+apis:
+- aid: kallyope:content-api
+  name: Kallyope Content REST API
+  description: 'Anonymous, read-only REST surface behind kallyope.com. Kallyope runs
+    WordPress and exposes the WordPress REST API publicly at https://kallyope.com/wp-json
+    with 326 registered routes across 14 namespaces. The publicly readable surface is
+    the stock wp/v2 namespace, which Kallyope has extended with a first-party custom
+    post type — "document" (scientific posters, presentations, publications and video)
+    — and four first-party custom taxonomies that classify it: program (drug programs,
+    e.g. elismetrep), event (scientific congresses such as the American Headache Society
+    and Academy of Neurology annual meetings), content-type (presentation, poster,
+    publication, video, terms-conditions) and document-type. Alongside those sit the
+    core posts (company news), pages, media, categories, users, search, types and
+    taxonomies collections. No authentication is required for reads and none of the
+    write methods are reachable anonymously; no API keys, rate-limit headers or developer
+    documentation are published for it. This is a content and marketing API, not a
+    Klarity platform, research-data or clinical API.'
+  humanURL: https://kallyope.com/
+  baseURL: https://kallyope.com/wp-json
+  tags:
+  - Content
+  - News
+  - Documents
+  - Publications
+  - Media
+  - Search
+  properties:
+  - type: OpenAPI
+    url: openapi/kallyope-content-api-openapi.yml
+  - type: Overlay
+    url: overlays/kallyope-content-api-overlay.yaml
+  - type: Authentication
+    url: authentication/kallyope-authentication.yml
+  - type: Conventions
+    url: conventions/kallyope-conventions.yml
+  - type: ErrorCatalog
+    url: errors/kallyope-problem-types.yml
+  - type: DataModel
+    url: data-model/kallyope-data-model.yml
+  - type: Lifecycle
+    url: lifecycle/kallyope-lifecycle.yml
+  - type: MCPServer
+    url: mcp/kallyope-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/kallyope-tool-crosswalk.yml
+  - type: AgentSkill
+    url: skills/_index.yml
+  - type: Website
+    url: https://kallyope.com/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +95,33 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
+  url: https://kallyope.com/
+- type: About
+  url: https://kallyope.com/about/
+- type: Blog
+  url: https://kallyope.com/news/
+- type: Support
+  url: https://kallyope.com/contact/
+- type: Careers
+  url: https://kallyope.com/careers/
+- type: Partners
+  url: https://kallyope.com/partnering/
+- type: LinkedIn
+  url: https://www.linkedin.com/company/kallyope/
+- type: Conformance
+  url: conformance/kallyope-conformance.yml
+- type: DomainSecurity
+  url: security/kallyope-domain-security.yml
+- type: WellKnown
+  url: well-known/kallyope-well-known.yml
+- type: LLMsTxt
+  url: llms/kallyope-llms.txt
+- type: JSONLD
+  url: json-ld/kallyope-organization.jsonld
+- type: Website
   url: https://forgeglobal.com/kallyope_stock/
+x-enrichment:
+  date: '2026-08-01'
+  status: enriched
+  artifacts_added: 17
+  pass: local-v1
