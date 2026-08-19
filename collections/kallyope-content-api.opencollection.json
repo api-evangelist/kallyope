@@ -1,0 +1,856 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Kallyope Content REST API (derived)",
+    "version": "2"
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Discovery",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get the REST API root index",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/"
+          },
+          "docs": "Returns the WordPress REST API discovery document — site name, URL, the list of registered namespaces, every registered route with its methods and declared args, and the `authentication` block advertising application-password authorization."
+        },
+        {
+          "info": {
+            "name": "Search across all public content",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/search",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to items of an object type."
+              },
+              {
+                "name": "subtype",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to items of one or more object subtypes."
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query",
+                "description": "Ensure result set excludes specific IDs."
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to specific IDs."
+              }
+            ]
+          },
+          "docs": "Site-wide search returning lightweight `{id, title, url, type, subtype}` records across posts, pages and documents. Observed on 2026-08-01: 23 searchable items."
+        },
+        {
+          "info": {
+            "name": "List registered post types",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/types"
+          },
+          "docs": "Returns every registered post type with its `rest_base`, `rest_namespace`, `taxonomies` and hierarchy flag — the machine-readable index of the content models this API exposes, including Kallyope's first-party `document` type."
+        },
+        {
+          "info": {
+            "name": "List registered taxonomies",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/taxonomies"
+          },
+          "docs": "Returns every registered taxonomy with its `rest_base`, the post types it applies to, and hierarchy flag — including Kallyope's first-party `program`, `event`, `content-type` and `document-type` taxonomies."
+        },
+        {
+          "info": {
+            "name": "List public authors",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/users",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              }
+            ]
+          },
+          "docs": "Publicly readable author list (authors of published posts only). Observed on 2026-08-01: 2 users."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Documents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List documents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/document",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts published after a given ISO8601 compliant date."
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts published before a given ISO8601 compliant date."
+              },
+              {
+                "name": "modified_after",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts modified after a given ISO8601 compliant date."
+              },
+              {
+                "name": "modified_before",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts modified before a given ISO8601 compliant date."
+              },
+              {
+                "name": "exclude",
+                "value": "",
+                "type": "query",
+                "description": "Ensure result set excludes specific IDs."
+              },
+              {
+                "name": "include",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to specific IDs."
+              },
+              {
+                "name": "offset",
+                "value": "",
+                "type": "query",
+                "description": "Offset the result set by a specific number of items."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Order sort attribute ascending or descending."
+              },
+              {
+                "name": "orderby",
+                "value": "",
+                "type": "query",
+                "description": "Sort collection by post attribute."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to posts with one or more specific slugs."
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to posts assigned one or more statuses."
+              },
+              {
+                "name": "tax_relation",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set based on relationship between multiple taxonomies."
+              },
+              {
+                "name": "program",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the program taxonomy."
+              },
+              {
+                "name": "program_exclude",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items except those with specific terms assigned in the program taxonomy."
+              },
+              {
+                "name": "event",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the event taxonomy."
+              },
+              {
+                "name": "event_exclude",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items except those with specific terms assigned in the event taxonomy."
+              },
+              {
+                "name": "content-type",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the content-type taxonomy."
+              },
+              {
+                "name": "content-type_exclude",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items except those with specific terms assigned in the content-type taxonomy."
+              },
+              {
+                "name": "document-type",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the document-type taxonomy."
+              }
+            ]
+          },
+          "docs": "List Kallyope's scientific documents — congress posters, presentations, publications and video. Filterable by the first-party program, event, content-type and document-type taxonomies."
+        },
+        {
+          "info": {
+            "name": "Get a document by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/document/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the post."
+              },
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "excerpt_length",
+                "value": "",
+                "type": "query",
+                "description": "Override the default excerpt length."
+              },
+              {
+                "name": "password",
+                "value": "",
+                "type": "query",
+                "description": "The password for the post if it is password protected."
+              }
+            ]
+          },
+          "docs": "Get a document by ID"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Taxonomies",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List program terms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/program",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms with one or more specific slugs."
+              },
+              {
+                "name": "hide_empty",
+                "value": "",
+                "type": "query",
+                "description": "Whether to hide terms not assigned to any posts."
+              },
+              {
+                "name": "post",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms assigned to a specific post."
+              },
+              {
+                "name": "parent",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms assigned to a specific parent."
+              }
+            ]
+          },
+          "docs": "List the first-party `program` taxonomy — Kallyope's named drug programs. Observed on 2026-08-01: one term, `elismetrep` (7 associated documents)."
+        },
+        {
+          "info": {
+            "name": "List event terms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/event",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms with one or more specific slugs."
+              },
+              {
+                "name": "hide_empty",
+                "value": "",
+                "type": "query",
+                "description": "Whether to hide terms not assigned to any posts."
+              },
+              {
+                "name": "post",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms assigned to a specific post."
+              }
+            ]
+          },
+          "docs": "List the first-party `event` taxonomy — the scientific congresses a document was presented at. Observed on 2026-08-01: `academy-of-neurology-annual-meeting` and `america-headache-society-annual-meeting`."
+        },
+        {
+          "info": {
+            "name": "List content-type terms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/content-type",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms with one or more specific slugs."
+              },
+              {
+                "name": "hide_empty",
+                "value": "",
+                "type": "query",
+                "description": "Whether to hide terms not assigned to any posts."
+              },
+              {
+                "name": "post",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms assigned to a specific post."
+              }
+            ]
+          },
+          "docs": "List the first-party `content-type` taxonomy — the form a document takes. Observed on 2026-08-01: `presentation`, `poster`, `publication`, `video`, `terms-conditions`."
+        },
+        {
+          "info": {
+            "name": "List document-type terms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/document-type",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms with one or more specific slugs."
+              },
+              {
+                "name": "hide_empty",
+                "value": "",
+                "type": "query",
+                "description": "Whether to hide terms not assigned to any posts."
+              }
+            ]
+          },
+          "docs": "List the first-party `document-type` taxonomy. Registered and publicly readable, but observed empty (0 terms) on 2026-08-01."
+        },
+        {
+          "info": {
+            "name": "List category terms",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/categories",
+            "params": [
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to terms with one or more specific slugs."
+              },
+              {
+                "name": "hide_empty",
+                "value": "",
+                "type": "query",
+                "description": "Whether to hide terms not assigned to any posts."
+              }
+            ]
+          },
+          "docs": "Core WordPress category taxonomy. Observed on 2026-08-01: 8 terms."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "News",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List company news posts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/posts",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "after",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts published after a given ISO8601 compliant date."
+              },
+              {
+                "name": "before",
+                "value": "",
+                "type": "query",
+                "description": "Limit response to posts published before a given ISO8601 compliant date."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to posts with one or more specific slugs."
+              },
+              {
+                "name": "categories",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the categories taxonomy."
+              },
+              {
+                "name": "categories_exclude",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items except those with specific terms assigned in the categories taxonomy."
+              },
+              {
+                "name": "tags",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with specific terms assigned in the tags taxonomy."
+              },
+              {
+                "name": "order",
+                "value": "",
+                "type": "query",
+                "description": "Order sort attribute ascending or descending."
+              },
+              {
+                "name": "orderby",
+                "value": "",
+                "type": "query",
+                "description": "Sort collection by post attribute."
+              }
+            ]
+          },
+          "docs": "List Kallyope's news and press-release posts. Observed on 2026-08-01: 6 items."
+        },
+        {
+          "info": {
+            "name": "Get a news post by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/posts/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the post."
+              },
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              }
+            ]
+          },
+          "docs": "Get a news post by ID"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Pages",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List site pages",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/pages",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "slug",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to posts with one or more specific slugs."
+              },
+              {
+                "name": "parent",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to items with particular parent IDs."
+              }
+            ]
+          },
+          "docs": "List the site's pages — home, about, pipeline, platform, partnering, careers, news, contact. Observed on 2026-08-01: 9 items."
+        },
+        {
+          "info": {
+            "name": "Get a site page by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/pages/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the post."
+              },
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              }
+            ]
+          },
+          "docs": "Get a site page by ID"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Media",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List media library items",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/media",
+            "params": [
+              {
+                "name": "context",
+                "value": "",
+                "type": "query",
+                "description": "Scope under which the request is made; determines fields present in response."
+              },
+              {
+                "name": "page",
+                "value": "",
+                "type": "query",
+                "description": "Current page of the collection."
+              },
+              {
+                "name": "per_page",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of items to be returned in result set."
+              },
+              {
+                "name": "search",
+                "value": "",
+                "type": "query",
+                "description": "Limit results to those matching a string."
+              },
+              {
+                "name": "media_type",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to attachments of a particular media type."
+              },
+              {
+                "name": "mime_type",
+                "value": "",
+                "type": "query",
+                "description": "Limit result set to attachments of a particular MIME type."
+              }
+            ]
+          },
+          "docs": "List uploaded media — the PDFs, splash images and logos referenced by documents and pages. Observed on 2026-08-01: X-WP-Total 215."
+        },
+        {
+          "info": {
+            "name": "Get a media item by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://kallyope.com/wp-json/wp/v2/media/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier for the attachment."
+              }
+            ]
+          },
+          "docs": "Get a media item by ID"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -2,12 +2,10 @@ generated: '2026-08-01'
 method: derived
 status: candidate
 source: openapi/kallyope-content-api-openapi.yml
-note: >-
-  Kallyope publishes NO MCP server. Searched the docs surface, npm, the MCP registries
-  and every kallyope.com host; probed mcp.kallyope.com and api.kallyope.com (neither
-  resolves) and POSTed tools/list against https://kallyope.com/wp-json (no MCP
-  transport). This file is a CANDIDATE tool set derived from the anonymous read
-  operations in the derived OpenAPI — it describes what an MCP server over this surface
+note: Kallyope publishes NO MCP server. Searched the docs surface, npm, the MCP registries and every kallyope.com
+  host; probed mcp.kallyope.com and api.kallyope.com (neither resolves) and POSTed tools/list against
+  https://kallyope.com/wp-json (no MCP transport). This file is a CANDIDATE tool set derived from the
+  anonymous read operations in the derived OpenAPI — it describes what an MCP server over this surface
   would expose, and must not be read as a Kallyope-published server.
 api: kallyope:content-api
 server:
@@ -17,15 +15,19 @@ server:
   published: false
 probe:
   date: '2026-08-01'
-  hosts_probed: [kallyope.com, www.kallyope.com, api.kallyope.com, mcp.kallyope.com, docs.kallyope.com]
+  hosts_probed:
+  - kallyope.com
+  - www.kallyope.com
+  - api.kallyope.com
+  - mcp.kallyope.com
+  - docs.kallyope.com
   result: no MCP endpoint found
   oauth_protected_resource: 404
   oauth_authorization_server: 404
 tools:
 - name: list_documents
-  description: >-
-    List Kallyope's scientific documents (congress posters, presentations, publications,
-    video), optionally filtered by drug program, congress, content type or date window.
+  description: List Kallyope's scientific documents (congress posters, presentations, publications, video),
+    optionally filtered by drug program, congress, content type or date window.
   source_operation: openapi/kallyope-content-api-openapi.yml#listDocuments
 - name: get_document
   description: Retrieve a single Kallyope scientific document by its ID.
@@ -61,8 +63,14 @@ authentication:
   required: false
   note: Every backing operation is anonymously readable; no credential to broker.
 cautions:
-- Responses embed rendered HTML in `title.rendered` / `content.rendered`; a tool wrapper
-  should strip markup before returning text to a model.
-- Every record carries a large `yoast_head` string of SEO markup that should be dropped
-  with the `_fields` projection to keep responses small.
+- Responses embed rendered HTML in `title.rendered` / `content.rendered`; a tool wrapper should strip
+  markup before returning text to a model.
+- Every record carries a large `yoast_head` string of SEO markup that should be dropped with the `_fields`
+  projection to keep responses small.
 - Edge cache is `public, max-age=86400`, so results can be up to a day stale.
+deployment:
+  mode: none
+  verified: derived
+  tools: 11
+  checked: '2026-08-12'
+  source: catalog MCP census
