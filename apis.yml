@@ -18,6 +18,17 @@ description: 'Kallyope, Inc. is a New York City clinical-stage biotechnology com
   carrying the company news feed, site pages, media library and a first-party "document"
   content type of scientific posters, presentations and publications classified by the
   custom program, event, content-type and document-type taxonomies.'
+deliveryModel:
+  model: unknown
+  open_source: false
+  commercial: false
+  callable_host: true
+  label: Delivery model not determined — needs a product licence on record
+  confidence: low
+  source:
+  - openapi
+  generated: '2026-08-28'
+  method: derived
 image: https://kallyope.com/wp-content/uploads/2022/06/Kallyope_og.jpg
 url: https://raw.githubusercontent.com/api-evangelist/kallyope/refs/heads/main/apis.yml
 x-type: company
