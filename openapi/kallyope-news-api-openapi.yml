@@ -1,0 +1,315 @@
+openapi: 3.2.0
+info:
+  title: Kallyope Content REST API (derived) News API
+  version: '2'
+  summary: Anonymous read-only REST surface behind kallyope.com, exposing Kallyope's company news, site pages, media library and its first-party library of scientific documents (posters, presentations, publications and video) as JSON.
+  description: 'Kallyope, Inc. runs kallyope.com on WordPress (hosted on Pantheon, fronted by Fastly)
+
+    and exposes the WordPress REST API publicly at `https://kallyope.com/wp-json`. The
+
+    route index registers **326 routes across 14 namespaces**; the publicly readable
+
+    portion is the core `wp/v2` namespace, which Kallyope has extended with **first-party
+
+    content models** registered through Custom Post Type UI:
+
+
+    | Model | Kind | REST base | Observed items |
+
+    |---|---|---|---|
+
+    | `document` | custom post type | `/wp/v2/document` | 8 |
+
+    | `program` | custom taxonomy | `/wp/v2/program` | 1 (`elismetrep`) |
+
+    | `event` | custom taxonomy | `/wp/v2/event` | 2 congresses |
+
+    | `content-type` | custom taxonomy | `/wp/v2/content-type` | 5 |
+
+    | `document-type` | custom taxonomy | `/wp/v2/document-type` | 0 |
+
+
+    A `document` is a piece of scientific communication — the AHS 2026 elismetrep poster
+
+    and MOA presentation, for example — carrying `title`, `content`, `excerpt`,
+
+    `featured_media` and term references into `program`, `event`, `content-type` and
+
+    `document-type`. Alongside those sit the core `posts` (company news, 6 items),
+
+    `pages` (9), `media` (215), `categories` (8), `users` (2), `search`, `types` and
+
+    `taxonomies` collections.
+
+
+    These endpoints require **no authentication** and returned real JSON payloads when
+
+    probed on 2026-08-01. This is a content and marketing API, not a Klarity discovery
+
+    platform API, a research-data API or a clinical API — Kallyope publishes no developer
+
+    portal, no API reference, no SDKs, no CLI and no public GitHub organization, and the
+
+    surface exists as a byproduct of running WordPress rather than as a designed public
+
+    contract. Responses are standard WordPress REST records, so field names follow
+
+    WordPress internals (`id`, `slug`, `title.rendered`, `content.rendered`, `_links`,
+
+    plus Yoast SEO''s `yoast_head` / `yoast_head_json`).
+
+
+    Collections page with `page` / `per_page` (max 100) and report `X-WP-Total` and
+
+    `X-WP-TotalPages`, with RFC 8288 `Link` rel="next"/"prev". Errors are the WordPress
+
+    `{code, message, data.status}` envelope — not RFC 9457 problem+json.
+
+    '
+  contact:
+    name: Kallyope, Inc.
+    url: https://kallyope.com/contact/
+  x-derived-by:
+    organization: API Evangelist
+    url: https://apievangelist.com
+servers:
+- url: https://kallyope.com/wp-json
+  description: Production WordPress REST API root for kallyope.com
+tags:
+- name: News
+  description: Company news and press-release posts.
+paths:
+  /wp/v2/posts:
+    get:
+      operationId: listPosts
+      tags:
+      - News
+      summary: List company news posts
+      description: 'List Kallyope''s news and press-release posts. Observed on 2026-08-01: 6 items.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: after
+        in: query
+        description: Limit response to posts published after a given ISO8601 compliant date.
+        schema:
+          type: string
+      - name: before
+        in: query
+        description: Limit response to posts published before a given ISO8601 compliant date.
+        schema:
+          type: string
+      - name: slug
+        in: query
+        description: Limit result set to posts with one or more specific slugs.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: categories
+        in: query
+        description: Limit result set to items with specific terms assigned in the categories taxonomy.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: categories_exclude
+        in: query
+        description: Limit result set to items except those with specific terms assigned in the categories taxonomy.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: tags
+        in: query
+        description: Limit result set to items with specific terms assigned in the tags taxonomy.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: order
+        in: query
+        description: Order sort attribute ascending or descending.
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+      - name: orderby
+        in: query
+        description: Sort collection by post attribute.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A page of posts
+          headers:
+            X-WP-Total:
+              description: Total number of items in the collection.
+              schema:
+                type: integer
+            X-WP-TotalPages:
+              description: Total number of pages available.
+              schema:
+                type: integer
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+        '400':
+          $ref: '#/components/responses/InvalidParam'
+  /wp/v2/posts/{id}:
+    get:
+      operationId: getPost
+      tags:
+      - News
+      summary: Get a news post by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        description: Unique identifier for the post.
+        schema:
+          type: integer
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: A single post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          $ref: '#/components/responses/InvalidPostId'
+components:
+  responses:
+    InvalidParam:
+      description: 'A query parameter failed validation. WordPress error envelope with `code: rest_invalid_param` and per-parameter detail under `data.params`.'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: rest_invalid_param
+            message: 'Invalid parameter(s): per_page'
+            data:
+              status: 400
+              params:
+                per_page: per_page must be between 1 (inclusive) and 100 (inclusive)
+    InvalidPostId:
+      description: No record exists with that identifier.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            code: rest_post_invalid_id
+            message: Invalid post ID.
+            data:
+              status: 404
+  schemas:
+    Error:
+      type: object
+      description: The WordPress REST error envelope. Not RFC 9457 problem+json — served as application/json with the HTTP status mirrored into `data.status`.
+      required:
+      - code
+      - message
+      - data
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code, e.g. rest_no_route.
+        message:
+          type: string
+          description: Human-readable message.
+        data:
+          type: object
+          properties:
+            status:
+              type: integer
+            params:
+              type: object
+            details:
+              type: object
+    Rendered:
+      type: object
+      description: WordPress rendered-content wrapper.
+      properties:
+        rendered:
+          type: string
+        protected:
+          type: boolean
+    Post:
+      type: object
+      description: A core WordPress post or page record.
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+        modified:
+          type: string
+        slug:
+          type: string
+        status:
+          type: string
+        type:
+          type: string
+        link:
+          type: string
+          format: uri
+        title:
+          $ref: '#/components/schemas/Rendered'
+        content:
+          $ref: '#/components/schemas/Rendered'
+        excerpt:
+          $ref: '#/components/schemas/Rendered'
+        author:
+          type: integer
+        featured_media:
+          type: integer
+        categories:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+        yoast_head_json:
+          type: object
+        _links:
+          type: object
+x-provenance:
+  generated: '2026-08-01'
+  method: derived
+  source: https://kallyope.com/wp-json/
+  note: Derived by API Evangelist from the live, anonymous WordPress REST API route index published at https://kallyope.com/wp-json/ on 2026-08-01, and from an observed HTTP GET of every path below. Kallyope, Inc. does not publish an OpenAPI description; this document describes only routes, query parameters and response shapes that were actually observed on the wire or declared verbatim in the route index. Query parameters are copied from the `args` block the route index publishes for each endpoint. Only the anonymously readable GET surface is described — the route index also registers POST/PUT/PATCH/DELETE on these collections plus 13 further plugin namespaces (ithemes-security, akismet, redirection, yoast, liquidweb/harbor, cptui, duplicate-post, regenerate-thumbnails, wp-site-health, wp-block-editor, wp-abilities, oembed), all of which require an authenticated WordPress session or application password and were not exercised. Nothing here is invented — where a shape was not observable it is left unconstrained rather than guessed.

@@ -1,0 +1,278 @@
+openapi: 3.2.0
+info:
+  title: Kallyope Content REST API (derived) Taxonomies API
+  version: '2'
+  summary: Anonymous read-only REST surface behind kallyope.com, exposing Kallyope's company news, site pages, media library and its first-party library of scientific documents (posters, presentations, publications and video) as JSON.
+  description: 'Kallyope, Inc. runs kallyope.com on WordPress (hosted on Pantheon, fronted by Fastly)
+
+    and exposes the WordPress REST API publicly at `https://kallyope.com/wp-json`. The
+
+    route index registers **326 routes across 14 namespaces**; the publicly readable
+
+    portion is the core `wp/v2` namespace, which Kallyope has extended with **first-party
+
+    content models** registered through Custom Post Type UI:
+
+
+    | Model | Kind | REST base | Observed items |
+
+    |---|---|---|---|
+
+    | `document` | custom post type | `/wp/v2/document` | 8 |
+
+    | `program` | custom taxonomy | `/wp/v2/program` | 1 (`elismetrep`) |
+
+    | `event` | custom taxonomy | `/wp/v2/event` | 2 congresses |
+
+    | `content-type` | custom taxonomy | `/wp/v2/content-type` | 5 |
+
+    | `document-type` | custom taxonomy | `/wp/v2/document-type` | 0 |
+
+
+    A `document` is a piece of scientific communication — the AHS 2026 elismetrep poster
+
+    and MOA presentation, for example — carrying `title`, `content`, `excerpt`,
+
+    `featured_media` and term references into `program`, `event`, `content-type` and
+
+    `document-type`. Alongside those sit the core `posts` (company news, 6 items),
+
+    `pages` (9), `media` (215), `categories` (8), `users` (2), `search`, `types` and
+
+    `taxonomies` collections.
+
+
+    These endpoints require **no authentication** and returned real JSON payloads when
+
+    probed on 2026-08-01. This is a content and marketing API, not a Klarity discovery
+
+    platform API, a research-data API or a clinical API — Kallyope publishes no developer
+
+    portal, no API reference, no SDKs, no CLI and no public GitHub organization, and the
+
+    surface exists as a byproduct of running WordPress rather than as a designed public
+
+    contract. Responses are standard WordPress REST records, so field names follow
+
+    WordPress internals (`id`, `slug`, `title.rendered`, `content.rendered`, `_links`,
+
+    plus Yoast SEO''s `yoast_head` / `yoast_head_json`).
+
+
+    Collections page with `page` / `per_page` (max 100) and report `X-WP-Total` and
+
+    `X-WP-TotalPages`, with RFC 8288 `Link` rel="next"/"prev". Errors are the WordPress
+
+    `{code, message, data.status}` envelope — not RFC 9457 problem+json.
+
+    '
+  contact:
+    name: Kallyope, Inc.
+    url: https://kallyope.com/contact/
+  x-derived-by:
+    organization: API Evangelist
+    url: https://apievangelist.com
+servers:
+- url: https://kallyope.com/wp-json
+  description: Production WordPress REST API root for kallyope.com
+tags:
+- name: Taxonomies
+  description: The first-party program / event / content-type / document-type classifications applied to documents.
+paths:
+  /wp/v2/program:
+    get:
+      operationId: listPrograms
+      tags:
+      - Taxonomies
+      summary: List program terms
+      description: 'List the first-party `program` taxonomy — Kallyope''s named drug programs. Observed on 2026-08-01: one term, `elismetrep` (7 associated documents).'
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSearch'
+      - $ref: '#/components/parameters/TermSlug'
+      - $ref: '#/components/parameters/TermHideEmpty'
+      - $ref: '#/components/parameters/TermPost'
+      - $ref: '#/components/parameters/TermParent'
+      responses:
+        '200':
+          description: A page of program terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+  /wp/v2/event:
+    get:
+      operationId: listEvents
+      tags:
+      - Taxonomies
+      summary: List event terms
+      description: 'List the first-party `event` taxonomy — the scientific congresses a document was presented at. Observed on 2026-08-01: `academy-of-neurology-annual-meeting` and `america-headache-society-annual-meeting`.'
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSearch'
+      - $ref: '#/components/parameters/TermSlug'
+      - $ref: '#/components/parameters/TermHideEmpty'
+      - $ref: '#/components/parameters/TermPost'
+      responses:
+        '200':
+          description: A page of event terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+  /wp/v2/content-type:
+    get:
+      operationId: listContentTypes
+      tags:
+      - Taxonomies
+      summary: List content-type terms
+      description: 'List the first-party `content-type` taxonomy — the form a document takes. Observed on 2026-08-01: `presentation`, `poster`, `publication`, `video`, `terms-conditions`.'
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSearch'
+      - $ref: '#/components/parameters/TermSlug'
+      - $ref: '#/components/parameters/TermHideEmpty'
+      - $ref: '#/components/parameters/TermPost'
+      responses:
+        '200':
+          description: A page of content-type terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+  /wp/v2/document-type:
+    get:
+      operationId: listDocumentTypes
+      tags:
+      - Taxonomies
+      summary: List document-type terms
+      description: List the first-party `document-type` taxonomy. Registered and publicly readable, but observed empty (0 terms) on 2026-08-01.
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSlug'
+      - $ref: '#/components/parameters/TermHideEmpty'
+      responses:
+        '200':
+          description: A page of document-type terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+  /wp/v2/categories:
+    get:
+      operationId: listCategories
+      tags:
+      - Taxonomies
+      summary: List category terms
+      description: 'Core WordPress category taxonomy. Observed on 2026-08-01: 8 terms.'
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSearch'
+      - $ref: '#/components/parameters/TermSlug'
+      - $ref: '#/components/parameters/TermHideEmpty'
+      responses:
+        '200':
+          description: A page of category terms
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Term'
+components:
+  parameters:
+    TermPerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+    TermParent:
+      name: parent
+      in: query
+      description: Limit result set to terms assigned to a specific parent.
+      schema:
+        type: integer
+    TermSlug:
+      name: slug
+      in: query
+      description: Limit result set to terms with one or more specific slugs.
+      schema:
+        type: array
+        items:
+          type: string
+    TermSearch:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    TermHideEmpty:
+      name: hide_empty
+      in: query
+      description: Whether to hide terms not assigned to any posts.
+      schema:
+        type: boolean
+    TermPost:
+      name: post
+      in: query
+      description: Limit result set to terms assigned to a specific post.
+      schema:
+        type: integer
+    TermPage:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        type: integer
+        default: 1
+  schemas:
+    Term:
+      type: object
+      description: A taxonomy term (program, event, content-type, document-type, category).
+      properties:
+        id:
+          type: integer
+        count:
+          type: integer
+          description: Number of documents assigned this term.
+        description:
+          type: string
+        link:
+          type: string
+          format: uri
+        name:
+          type: string
+        slug:
+          type: string
+        taxonomy:
+          type: string
+        parent:
+          type: integer
+        meta:
+          type: object
+        yoast_head_json:
+          type: object
+        _links:
+          type: object
+x-provenance:
+  generated: '2026-08-01'
+  method: derived
+  source: https://kallyope.com/wp-json/
+  note: Derived by API Evangelist from the live, anonymous WordPress REST API route index published at https://kallyope.com/wp-json/ on 2026-08-01, and from an observed HTTP GET of every path below. Kallyope, Inc. does not publish an OpenAPI description; this document describes only routes, query parameters and response shapes that were actually observed on the wire or declared verbatim in the route index. Query parameters are copied from the `args` block the route index publishes for each endpoint. Only the anonymously readable GET surface is described — the route index also registers POST/PUT/PATCH/DELETE on these collections plus 13 further plugin namespaces (ithemes-security, akismet, redirection, yoast, liquidweb/harbor, cptui, duplicate-post, regenerate-thumbnails, wp-site-health, wp-block-editor, wp-abilities, oembed), all of which require an authenticated WordPress session or application password and were not exercised. Nothing here is invented — where a shape was not observable it is left unconstrained rather than guessed.

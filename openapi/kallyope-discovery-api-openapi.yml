@@ -1,0 +1,267 @@
+openapi: 3.2.0
+info:
+  title: Kallyope Content REST API (derived) Discovery API
+  version: '2'
+  summary: Anonymous read-only REST surface behind kallyope.com, exposing Kallyope's company news, site pages, media library and its first-party library of scientific documents (posters, presentations, publications and video) as JSON.
+  description: 'Kallyope, Inc. runs kallyope.com on WordPress (hosted on Pantheon, fronted by Fastly)
+
+    and exposes the WordPress REST API publicly at `https://kallyope.com/wp-json`. The
+
+    route index registers **326 routes across 14 namespaces**; the publicly readable
+
+    portion is the core `wp/v2` namespace, which Kallyope has extended with **first-party
+
+    content models** registered through Custom Post Type UI:
+
+
+    | Model | Kind | REST base | Observed items |
+
+    |---|---|---|---|
+
+    | `document` | custom post type | `/wp/v2/document` | 8 |
+
+    | `program` | custom taxonomy | `/wp/v2/program` | 1 (`elismetrep`) |
+
+    | `event` | custom taxonomy | `/wp/v2/event` | 2 congresses |
+
+    | `content-type` | custom taxonomy | `/wp/v2/content-type` | 5 |
+
+    | `document-type` | custom taxonomy | `/wp/v2/document-type` | 0 |
+
+
+    A `document` is a piece of scientific communication — the AHS 2026 elismetrep poster
+
+    and MOA presentation, for example — carrying `title`, `content`, `excerpt`,
+
+    `featured_media` and term references into `program`, `event`, `content-type` and
+
+    `document-type`. Alongside those sit the core `posts` (company news, 6 items),
+
+    `pages` (9), `media` (215), `categories` (8), `users` (2), `search`, `types` and
+
+    `taxonomies` collections.
+
+
+    These endpoints require **no authentication** and returned real JSON payloads when
+
+    probed on 2026-08-01. This is a content and marketing API, not a Klarity discovery
+
+    platform API, a research-data API or a clinical API — Kallyope publishes no developer
+
+    portal, no API reference, no SDKs, no CLI and no public GitHub organization, and the
+
+    surface exists as a byproduct of running WordPress rather than as a designed public
+
+    contract. Responses are standard WordPress REST records, so field names follow
+
+    WordPress internals (`id`, `slug`, `title.rendered`, `content.rendered`, `_links`,
+
+    plus Yoast SEO''s `yoast_head` / `yoast_head_json`).
+
+
+    Collections page with `page` / `per_page` (max 100) and report `X-WP-Total` and
+
+    `X-WP-TotalPages`, with RFC 8288 `Link` rel="next"/"prev". Errors are the WordPress
+
+    `{code, message, data.status}` envelope — not RFC 9457 problem+json.
+
+    '
+  contact:
+    name: Kallyope, Inc.
+    url: https://kallyope.com/contact/
+  x-derived-by:
+    organization: API Evangelist
+    url: https://apievangelist.com
+servers:
+- url: https://kallyope.com/wp-json
+  description: Production WordPress REST API root for kallyope.com
+tags:
+- name: Discovery
+  description: Site-wide search and the registered post-type / taxonomy indexes.
+paths:
+  /:
+    get:
+      operationId: getApiIndex
+      tags:
+      - Discovery
+      summary: Get the REST API root index
+      description: Returns the WordPress REST API discovery document — site name, URL, the list of registered namespaces, every registered route with its methods and declared args, and the `authentication` block advertising application-password authorization.
+      responses:
+        '200':
+          description: API root index
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  url:
+                    type: string
+                    format: uri
+                  namespaces:
+                    type: array
+                    items:
+                      type: string
+                  authentication:
+                    type: object
+                  routes:
+                    type: object
+  /wp/v2/search:
+    get:
+      operationId: search
+      tags:
+      - Discovery
+      summary: Search across all public content
+      description: 'Site-wide search returning lightweight `{id, title, url, type, subtype}` records across posts, pages and documents. Observed on 2026-08-01: 23 searchable items.'
+      parameters:
+      - name: context
+        in: query
+        description: Scope under which the request is made; determines fields present in response.
+        schema:
+          type: string
+      - name: page
+        in: query
+        description: Current page of the collection.
+        schema:
+          type: integer
+          default: 1
+      - name: per_page
+        in: query
+        description: Maximum number of items to be returned in result set.
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 10
+      - name: search
+        in: query
+        description: Limit results to those matching a string.
+        schema:
+          type: string
+      - name: type
+        in: query
+        description: Limit results to items of an object type.
+        schema:
+          type: string
+      - name: subtype
+        in: query
+        description: Limit results to items of one or more object subtypes.
+        schema:
+          type: array
+          items:
+            type: string
+      - name: exclude
+        in: query
+        description: Ensure result set excludes specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      - name: include
+        in: query
+        description: Limit result set to specific IDs.
+        schema:
+          type: array
+          items:
+            type: integer
+      responses:
+        '200':
+          description: A page of search results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    title:
+                      type: string
+                    url:
+                      type: string
+                      format: uri
+                    type:
+                      type: string
+                    subtype:
+                      type: string
+  /wp/v2/types:
+    get:
+      operationId: listTypes
+      tags:
+      - Discovery
+      summary: List registered post types
+      description: Returns every registered post type with its `rest_base`, `rest_namespace`, `taxonomies` and hierarchy flag — the machine-readable index of the content models this API exposes, including Kallyope's first-party `document` type.
+      responses:
+        '200':
+          description: Map of post type name to post type descriptor
+          content:
+            application/json:
+              schema:
+                type: object
+  /wp/v2/taxonomies:
+    get:
+      operationId: listTaxonomies
+      tags:
+      - Discovery
+      summary: List registered taxonomies
+      description: Returns every registered taxonomy with its `rest_base`, the post types it applies to, and hierarchy flag — including Kallyope's first-party `program`, `event`, `content-type` and `document-type` taxonomies.
+      responses:
+        '200':
+          description: Map of taxonomy name to taxonomy descriptor
+          content:
+            application/json:
+              schema:
+                type: object
+  /wp/v2/users:
+    get:
+      operationId: listUsers
+      tags:
+      - Discovery
+      summary: List public authors
+      description: 'Publicly readable author list (authors of published posts only). Observed on 2026-08-01: 2 users.'
+      parameters:
+      - $ref: '#/components/parameters/TermPage'
+      - $ref: '#/components/parameters/TermPerPage'
+      - $ref: '#/components/parameters/TermSearch'
+      responses:
+        '200':
+          description: A page of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+components:
+  parameters:
+    TermPerPage:
+      name: per_page
+      in: query
+      description: Maximum number of items to be returned in result set.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+    TermSearch:
+      name: search
+      in: query
+      description: Limit results to those matching a string.
+      schema:
+        type: string
+    TermPage:
+      name: page
+      in: query
+      description: Current page of the collection.
+      schema:
+        type: integer
+        default: 1
+x-provenance:
+  generated: '2026-08-01'
+  method: derived
+  source: https://kallyope.com/wp-json/
+  note: Derived by API Evangelist from the live, anonymous WordPress REST API route index published at https://kallyope.com/wp-json/ on 2026-08-01, and from an observed HTTP GET of every path below. Kallyope, Inc. does not publish an OpenAPI description; this document describes only routes, query parameters and response shapes that were actually observed on the wire or declared verbatim in the route index. Query parameters are copied from the `args` block the route index publishes for each endpoint. Only the anonymously readable GET surface is described — the route index also registers POST/PUT/PATCH/DELETE on these collections plus 13 further plugin namespaces (ithemes-security, akismet, redirection, yoast, liquidweb/harbor, cptui, duplicate-post, regenerate-thumbnails, wp-site-health, wp-block-editor, wp-abilities, oembed), all of which require an authenticated WordPress session or application password and were not exercised. Nothing here is invented — where a shape was not observable it is left unconstrained rather than guessed.
