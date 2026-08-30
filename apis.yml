@@ -179,6 +179,8 @@ apis:
   humanURL: https://kallyope.com/
   baseURL: https://kallyope.com/wp-json
   tags:
+  - taxonomies
+  tags_raw:
   - Taxonomies
   properties:
   - type: OpenAPI
