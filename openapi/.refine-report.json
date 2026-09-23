@@ -1,0 +1,30 @@
+{
+  "provider": "kallyope",
+  "sources": [
+    "_ae-authored/kallyope-content-api-openapi.yml"
+  ],
+  "outputs": [
+    "kallyope-discovery-api-openapi.yml",
+    "kallyope-documents-api-openapi.yml",
+    "kallyope-media-api-openapi.yml",
+    "kallyope-news-api-openapi.yml",
+    "kallyope-pages-api-openapi.yml",
+    "kallyope-taxonomies-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (0 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "kallyope-content-api-openapi.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "kallyope-discovery-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "kallyope-documents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "kallyope-media-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "kallyope-news-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "kallyope-pages-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "kallyope-taxonomies-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}

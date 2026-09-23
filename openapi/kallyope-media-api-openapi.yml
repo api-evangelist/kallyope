@@ -3,69 +3,7 @@ info:
   title: Kallyope Content REST API (derived) Media API
   version: '2'
   summary: Anonymous read-only REST surface behind kallyope.com, exposing Kallyope's company news, site pages, media library and its first-party library of scientific documents (posters, presentations, publications and video) as JSON.
-  description: 'Kallyope, Inc. runs kallyope.com on WordPress (hosted on Pantheon, fronted by Fastly)
-
-    and exposes the WordPress REST API publicly at `https://kallyope.com/wp-json`. The
-
-    route index registers **326 routes across 14 namespaces**; the publicly readable
-
-    portion is the core `wp/v2` namespace, which Kallyope has extended with **first-party
-
-    content models** registered through Custom Post Type UI:
-
-
-    | Model | Kind | REST base | Observed items |
-
-    |---|---|---|---|
-
-    | `document` | custom post type | `/wp/v2/document` | 8 |
-
-    | `program` | custom taxonomy | `/wp/v2/program` | 1 (`elismetrep`) |
-
-    | `event` | custom taxonomy | `/wp/v2/event` | 2 congresses |
-
-    | `content-type` | custom taxonomy | `/wp/v2/content-type` | 5 |
-
-    | `document-type` | custom taxonomy | `/wp/v2/document-type` | 0 |
-
-
-    A `document` is a piece of scientific communication — the AHS 2026 elismetrep poster
-
-    and MOA presentation, for example — carrying `title`, `content`, `excerpt`,
-
-    `featured_media` and term references into `program`, `event`, `content-type` and
-
-    `document-type`. Alongside those sit the core `posts` (company news, 6 items),
-
-    `pages` (9), `media` (215), `categories` (8), `users` (2), `search`, `types` and
-
-    `taxonomies` collections.
-
-
-    These endpoints require **no authentication** and returned real JSON payloads when
-
-    probed on 2026-08-01. This is a content and marketing API, not a Klarity discovery
-
-    platform API, a research-data API or a clinical API — Kallyope publishes no developer
-
-    portal, no API reference, no SDKs, no CLI and no public GitHub organization, and the
-
-    surface exists as a byproduct of running WordPress rather than as a designed public
-
-    contract. Responses are standard WordPress REST records, so field names follow
-
-    WordPress internals (`id`, `slug`, `title.rendered`, `content.rendered`, `_links`,
-
-    plus Yoast SEO''s `yoast_head` / `yoast_head_json`).
-
-
-    Collections page with `page` / `per_page` (max 100) and report `X-WP-Total` and
-
-    `X-WP-TotalPages`, with RFC 8288 `Link` rel="next"/"prev". Errors are the WordPress
-
-    `{code, message, data.status}` envelope — not RFC 9457 problem+json.
-
-    '
+  description: Kallyope, Inc.
   contact:
     name: Kallyope, Inc.
     url: https://kallyope.com/contact/
