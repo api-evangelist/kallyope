@@ -64,162 +64,26 @@ tags:
 - Clinical Trials
 - Content
 apis:
-- aid: kallyope:kallyope-discovery-api
-  name: Kallyope Discovery API
-  description: Site-wide search and the registered post-type / taxonomy indexes.
-  humanURL: https://kallyope.com/
+- aid: kallyope:kallyope-com-website-wordpress-rest
+  name: Kallyope Website (WordPress REST)
+  description: 'The public WordPress REST API (wp-json) of the Kallyope website at kallyope.com: the route
+    index of the site''s content management system, catalogued as one site surface rather than as separate
+    APIs.'
   baseURL: https://kallyope.com/wp-json
   tags:
-  - Discovery
+  - WordPress
+  x-surface: platform-generated
   properties:
-  - type: OpenAPI
-    url: openapi/kallyope-discovery-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
-- aid: kallyope:kallyope-documents-api
-  name: Kallyope Documents API
-  description: >-
-    Kallyope's first-party library of scientific posters, presentations, publications and video.
-  humanURL: https://kallyope.com/
-  baseURL: https://kallyope.com/wp-json
-  tags:
-  - Documents
-  properties:
-  - type: OpenAPI
-    url: openapi/kallyope-documents-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
-- aid: kallyope:kallyope-media-api
-  name: Kallyope Media API
-  description: The uploaded media library backing documents and pages.
-  humanURL: https://kallyope.com/
-  baseURL: https://kallyope.com/wp-json
-  tags:
-  - Media
-  properties:
-  - type: OpenAPI
-    url: openapi/kallyope-media-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
-- aid: kallyope:kallyope-news-api
-  name: Kallyope News API
-  description: Company news and press-release posts.
-  humanURL: https://kallyope.com/
-  baseURL: https://kallyope.com/wp-json
-  tags:
-  - News
-  properties:
-  - type: OpenAPI
-    url: openapi/kallyope-news-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
-- aid: kallyope:kallyope-pages-api
-  name: Kallyope Pages API
-  description: Site pages (about, pipeline, platform, partnering, careers, contact).
-  humanURL: https://kallyope.com/
-  baseURL: https://kallyope.com/wp-json
-  tags:
-  - Pages
-  properties:
-  - type: OpenAPI
-    url: openapi/kallyope-pages-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
-- aid: kallyope:kallyope-taxonomies-api
-  name: Kallyope Taxonomies API
-  description: >-
-    The first-party program / event / content-type / document-type classifications applied to documents.
-  humanURL: https://kallyope.com/
-  baseURL: https://kallyope.com/wp-json
-  tags:
-  - taxonomies
-  tags_raw:
-  - Taxonomies
-  properties:
-  - type: OpenAPI
-    url: openapi/kallyope-taxonomies-api-openapi.yml
-  - type: Authentication
-    url: authentication/kallyope-authentication.yml
-  - type: Conventions
-    url: conventions/kallyope-conventions.yml
-  - type: ErrorCatalog
-    url: errors/kallyope-problem-types.yml
-  - type: DataModel
-    url: data-model/kallyope-data-model.yml
-  - type: Lifecycle
-    url: lifecycle/kallyope-lifecycle.yml
-  - type: ToolCrosswalk
-    url: mcp/kallyope-tool-crosswalk.yml
-  - type: Website
-    url: https://kallyope.com/
+  - type: Documentation
+    url: https://kallyope.com/wp-json
+  x-platform: wordpress
+  x-platform-surface: rest
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
-- type: Overlay
-  url: overlays/kallyope-content-api-overlay.yaml
 - type: X-MCPServerCandidate
   url: mcp/kallyope-mcp.yml
   note: 'Renamed from MCPServer 2026-09-03 (roadmap#247): the manifest self-describes as status: candidate — a tool list derived from the published API contracts, not an existing server. The scorer already read the manifest and reported mcp_server correctly; the MCPServer type was crediting the artifact-type surfaces with a server that does not exist.'
@@ -249,6 +113,18 @@ common:
   url: llms/kallyope-llms.txt
 - type: JSONLD
   url: json-ld/kallyope-organization.jsonld
+- type: Authentication
+  url: authentication/kallyope-authentication.yml
+- type: Conventions
+  url: conventions/kallyope-conventions.yml
+- type: ErrorCatalog
+  url: errors/kallyope-problem-types.yml
+- type: DataModel
+  url: data-model/kallyope-data-model.yml
+- type: Lifecycle
+  url: lifecycle/kallyope-lifecycle.yml
+- type: ToolCrosswalk
+  url: mcp/kallyope-tool-crosswalk.yml
 x-enrichment:
   date: '2026-08-01'
   status: enriched
