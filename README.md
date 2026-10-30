@@ -64,50 +64,104 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Kallyope, Inc. is a New York City clinical-stage biotechnology company, founded in 2015 by
-Columbia University scientists Charles Zuker, Tom Maniatis and Richard Axel, that
-translates the biology of the gut-brain axis into medicines. Its proprietary Klarity
-platform integrates single-cell sequencing, pathway circuit mapping, optogenetics and
-chemogenetics, human genetics, organoid systems and small-molecule and peptide chemistry
-to map the neural circuits underlying migraine and metabolism. Lead candidate elismetrep,
-a TRPM8 blocker, is in Phase 3 development for acute migraine.
+Kallyope, Inc. is a New York City clinical-stage biotechnology company, founded in 2015 by Columbia University scientists Charles Zuker, Tom Maniatis and Richard Axel, that translates the biology of the gut-brain axis into medicines. It launched with a $44M Series A and has since raised a $66M Series B, a $112M Series C and a $236M Series D co-led by Mubadala Investment Company and The Column Group, with backers including Bill Gates, Lux Capital, Polaris Partners, Casdin Capital and Alexandria Real Estate Equities. Its proprietary Klarity platform integrates single-cell sequencing, pathway circuit mapping, optogenetics and chemogenetics, proprietary human genetics, mouse and human organoid systems, and small-molecule and peptide chemistry to map the neural circuits underlying migraine and metabolism; lead candidate elismetrep, a TRPM8 blocker, is in Phase 3 development for acute migraine. Kallyope publishes no developer portal, API reference, SDKs, CLI, status page or public GitHub organization, and no OpenAPI, AsyncAPI, GraphQL, MCP or A2A agent-card surface was found on any host. Enrichment probing did find one real, anonymous, read-only REST surface: kallyope.com runs WordPress and exposes the WordPress REST API publicly at https://kallyope.com/wp-json, carrying the company news feed, site pages, media library and a first-party "document" content type of scientific posters, presentations and publications classified by the custom program, event, content-type and document-type taxonomies.
 
-- https://kallyope.com/
-- https://www.linkedin.com/company/kallyope/
-- https://forgeglobal.com/kallyope_stock/
+**Areas:** Company · Biotechnology · Life Sciences · Pharmaceuticals · Drug Discovery · Neuroscience · Gut-Brain Axis · Migraine · Metabolic Disease · Clinical Trials · Content
 
-## API surface
+## Kallyope on APIs.io
 
-Kallyope publishes **no** developer portal, API reference, SDKs, CLI, sandbox, changelog,
-status page or public GitHub organization, and no OpenAPI, AsyncAPI, GraphQL, MCP server
-or A2A agent card was found on any host.
+Everything profiled for Kallyope is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/kallyope/](https://apis.io/providers/kallyope/)** — or go straight to one of the APIs or properties below.
 
-Enrichment probing on 2026-08-01 did find one real, anonymous, read-only REST surface:
-kallyope.com runs WordPress and exposes the WordPress REST API publicly at
-`https://kallyope.com/wp-json` — 326 routes across 14 namespaces. Alongside the core
-`posts`, `pages`, `media` and `search` collections, Kallyope has registered a first-party
-`document` content type (scientific posters, presentations, publications and video)
-classified by four first-party taxonomies: `program` (drug programs, e.g. elismetrep),
-`event` (scientific congresses), `content-type` and `document-type`.
+### APIs (1)
 
-This is a content and marketing API, not a Klarity platform, research-data or clinical
-API, and it exists as a byproduct of the CMS rather than as a designed public contract.
+- [Kallyope Website (WordPress REST)](https://apis.io/apis/kallyope/kallyope-com-website-wordpress-rest/) — The public WordPress REST API (wp-json) of the Kallyope website at kallyope.com: the route index of the site's content management system, catalogued as one…
 
-## Artifacts
+### Published properties
 
-| Path | What |
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [kallyope-content](https://apis.io/servers/kallyope/kallyope-content/)
+
+#### JSON-LD (1)
+
+Linked-data contexts for the provider's vocabulary.
+
+- [Kallyope Organization Context](https://apis.io/jsonld/kallyope/kallyope-organization/)
+
+#### Collections (1)
+
+Postman and Open Collection request collections.
+
+- [Moved to /providers/kallyope/](https://apis.io/collections/kallyope/open-kallyope-content-api/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Kallyope Authentication](https://apis.io/security/kallyope/kallyope-authentication/)
+- [Kallyope Domain Security](https://apis.io/security/kallyope/kallyope-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://kallyope.com/)
+- [Support](https://kallyope.com/contact/)
+- [Blog](https://kallyope.com/news/)
+
+## API Evangelist rating
+
+**Kin Score 14.6** — emerging · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
 |---|---|
-| `openapi/kallyope-content-api-openapi.yml` | OpenAPI 3.1, **derived** by API Evangelist from the live route index and observed responses — not published by Kallyope |
-| `overlays/kallyope-content-api-overlay.yaml` | Our enhancements over that description |
-| `authentication/kallyope-authentication.yml` | Anonymous reads; application-password and cookie/nonce write paths |
-| `conventions/kallyope-conventions.yml` | Pagination, filtering, caching, error envelope; no idempotency, no rate-limit signal |
-| `errors/kallyope-problem-types.yml` | Observed 400/401/404 responses; WordPress envelope, not RFC 9457 |
-| `data-model/kallyope-data-model.yml` | Entity graph from the registered types and taxonomies |
-| `lifecycle/kallyope-lifecycle.yml` | Versioning; no SLA, deprecation policy or status page. Flags a dangling `docs.kallyope.com` DNS record |
-| `conformance/kallyope-conformance.yml` | Standards conformance; no published compliance program |
-| `security/kallyope-domain-security.yml` | TLS/HSTS/DNSSEC/CAA/SPF/DMARC probe results |
-| `well-known/kallyope-well-known.yml` | Every `/.well-known/` path probed — all 404 |
-| `json-ld/kallyope-organization.jsonld` | schema.org graph captured verbatim from the homepage |
-| `mcp/` | Candidate tool set derived from the OpenAPI, plus the tool crosswalk. Kallyope publishes no MCP server |
-| `skills/` | Two generated agent skills grounded in real operationIds |
-| `llms/kallyope-llms.txt` | Generated; Kallyope publishes no `llms.txt` |
+| Discoverability | 57.1 |
+| Contract quality | 8.3 |
+| Contract governance | 4.5 |
+| Operational transparency | 0.0 |
+| Developer ergonomics | 30.4 |
+| Access clarity | 0.0 |
+
+**Agent readiness 6.3** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | — |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | — |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 13.3** — Health
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/kallyope/](https://apis.io/providers/kallyope/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Kallyope: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/kallyope/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
